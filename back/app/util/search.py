@@ -10,6 +10,7 @@ import markitdown
 import tempfile
 
 # GOOGLE_API_KEY = "<取得したAPI鍵>"
+# APIキーの利用は、IP制限をしている。
 with open(".secret/api_key.txt") as f:
     GOOGLE_API_KEY = f.read().strip()
 
