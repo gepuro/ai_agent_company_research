@@ -1,0 +1,21 @@
+{
+    "name": "AI Agent Company Researcher",
+    "service": "workspace",
+    "dockerComposeFile": "docker-compose.yml",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.shell.linux": "/bin/bash",
+                "python.pythonPath": "/usr/bin/python",
+                "editor.defaultFormatter": "ms-python.black-formatter",
+                "editor.formatOnSave": true
+            }
+        }
+    },
+    "extensions": [
+        "ms-python.python",
+        "ms-azuretools.vscode-docker",
+        "ms-python.black-formatter"
+    ]
+}

@@ -1,0 +1,11 @@
+services:
+  workspace:
+    container_name: ai-agent-company-research
+    build: 
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    tty: true
+    environment:
+      PYTHONPATH: /workspace
+    volumes:
+      - ..:/workspace

@@ -1,0 +1,5 @@
+__pycache__
+.pyc
+.coverage
+.pytest_cache
+.DS_Store
