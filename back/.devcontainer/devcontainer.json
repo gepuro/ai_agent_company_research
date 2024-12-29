@@ -1,5 +1,5 @@
 {
-    "name": "AI Agent Company Researcher",
+    "name": "AI Agent Company Researcher Backend",
     "service": "workspace",
     "dockerComposeFile": "docker-compose.yml",
     "workspaceFolder": "/workspace",
@@ -7,7 +7,7 @@
         "vscode": {
             "settings": {
                 "terminal.integrated.shell.linux": "/bin/bash",
-                "python.pythonPath": "/usr/bin/python",
+                "python.pythonPath": "/usr/local/bin/python",
                 "editor.defaultFormatter": "ms-python.black-formatter",
                 "editor.formatOnSave": true
             }
@@ -17,5 +17,6 @@
         "ms-python.python",
         "ms-azuretools.vscode-docker",
         "ms-python.black-formatter"
-    ]
+    ],
+    "forwardPorts": ["splash:8050"]
 }

@@ -8,6 +8,12 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.13"
 httpx = "^0.28.1"
+google-generativeai = "^0.8.3"
+google-genai = "^0.3.0"
+google-cloud-aiplatform = "^1.75.0"
+google-api-python-client = "^2.156.0"
+beautifulsoup4 = "^4.12.3"
+markitdown = "^0.0.1a3"
 
 
 [build-system]
