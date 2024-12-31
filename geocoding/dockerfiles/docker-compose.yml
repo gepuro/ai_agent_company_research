@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+  cr_geocoding:
+    build:
+      context: ../
+      dockerfile: dockerfiles/Dockerfile
+    container_name: cr_geocoding
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "docker.{{.Name}}"
+    restart: always
+    ports:
+      - 5050:5050
+    
+networks:
+  default:
+    name: app-net
+    external: true

@@ -1,0 +1,15 @@
+version: "3.7"
+services:
+  cr_geocoding:
+    build:
+      context: ../
+      dockerfile: dockerfiles/Dockerfile
+    container_name: cr_geocoding
+    restart: always
+    ports:
+      - 5050:5050
+    
+networks:
+  default:
+    name: app-net
+    external: true

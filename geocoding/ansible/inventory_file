@@ -1,0 +1,5 @@
+[web]
+company_research
+
+[all:vars]
+docker_tag=latest

@@ -1,0 +1,58 @@
+- hosts: web
+  tasks:
+    - name: Make Directory
+      shell: mkdir -p ./company_research/geocoding
+      args:
+        chdir: ~/
+    - name: Copy dockerfiles
+      synchronize:
+        mode: push
+        src: ../dockerfiles
+        dest: ~/company_research/geocoding/
+        recursive: yes
+        delete: yes
+        rsync_opts:
+          - "-u"
+          - --delete
+    - name: Copy index.js
+      synchronize:
+        mode: push
+        src: ../index.js
+        dest: ~/company_research/geocoding/
+        recursive: yes
+        delete: yes
+        rsync_opts:
+          - "-u"
+          - --delete
+    - name: Copy package-lock.json
+      synchronize:
+        mode: push
+        src: ../package-lock.json
+        dest: ~/company_research/geocoding/
+        recursive: yes
+        delete: yes
+        rsync_opts:
+          - "-u"
+          - --delete
+    - name: Copy package.json
+      synchronize:
+        mode: push
+        src: ../package.json
+        dest: ~/company_research/geocoding/
+        recursive: yes
+        delete: yes
+        rsync_opts:
+          - "-u"
+          - --delete
+    - name: Build Docker Image
+      shell: docker-compose -f dockerfiles/docker-compose.yml build
+      args:
+        chdir: ~/company_research/geocoding/
+    - name: Down Docker Compose
+      shell: docker-compose -f dockerfiles/docker-compose.yml down
+      args:
+        chdir: ~/company_research/geocoding/
+    - name: Run Docker Compose
+      shell: docker-compose -f dockerfiles/docker-compose.yml up -d
+      args:
+        chdir: ~/company_research/geocoding/
