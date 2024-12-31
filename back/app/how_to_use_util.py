@@ -15,16 +15,16 @@ import asyncio
 #     print(response.candidates)
 
 
-# def main():
-# contents = [
-#     "Pythonを学ぶコンテンツを検討してください",
-#     """
-#     出力フォーマット
-#     {"初心者": "", "中級者": "", "上級者": ""}
-#     """,
-# ]
-# response = gemini.gemini(contents)
-# print(response)
+# async def main():
+#     contents = [
+#         "Pythonを学ぶコンテンツを検討してください",
+#         """
+#         出力フォーマット
+#         {"初心者": "", "中級者": "", "上級者": ""}
+#         """,
+#     ]
+#     response = gemini.gemini(contents)
+#     print(json.loads(response.candidates[0].content.parts[0].text))
 
 
 # async def main():
@@ -33,15 +33,17 @@ import asyncio
 #         f.write(json.dumps(response, ensure_ascii=False, indent=4))
 
 
-# async def main():
-#     response = await search.fetch_page(
-#         "https://eetimes.itmedia.co.jp/ee/articles/2411/11/news059.html"
-#         # "https://gepuro.net"
-#         # "https://www.sony.com/ja/SonyInfo/IR/library/presen/er/archive.html"
-#     )
-#     with open("response.md", "w") as f:
-#         f.write(response["markdown"])
+async def main():
+    response = await search.fetch_page(
+        # "https://eetimes.itmedia.co.jp/ee/articles/2411/11/news059.html"
+        # "https://gepuro.net"
+        # "https://www.sony.com/ja/SonyInfo/IR/library/presen/er/archive.html"
+        # "https://www.nitori.co.jp/about_us/corporate_data.html"
+        "https://semi-journal.jp/career/company/sony.html"
+    )
+    with open("response.md", "w") as f:
+        f.write(response["markdown"])
 
 
-# if __name__ == "__main__":
-#     asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())

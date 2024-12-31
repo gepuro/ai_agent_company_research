@@ -25,8 +25,29 @@ services:
      - "/etc/splash/filters"
      - "--lua-package-path"
      - "/etc/splash/lua_modules/?.lua"
+  postgres:
+    build:
+      context: ..
+      dockerfile: .devcontainer/postgres/Dockerfile
+    container_name: ai-agent-company-research-postgres
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      TZ: "Asia/Tokyo"
+    volumes:
+      - ai-agent-company-research-postgres-data:/var/lib/postgresql/data
+      # - /var/tmp/ai-agent-company-research-postgres/data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    # restart: always
+    # ports:
+    #   - 5432:5432
 
 networks:
   default:
-    external:
-      name: app-net
+    name: app-net
+    external: true
+
+volumes:
+  ai-agent-company-research-postgres-data:
+    name: ai-agent-company-research-postgres-data
+

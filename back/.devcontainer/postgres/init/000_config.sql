@@ -1,0 +1,20 @@
+CREATE USER system WITH PASSWORD 'system';
+
+CREATE DATABASE tmp OWNER system ENCODING 'UTF-8';
+CREATE DATABASE cr OWNER system ENCODING 'UTF-8';
+
+GRANT ALL PRIVILEGES ON DATABASE tmp TO system;
+GRANT ALL PRIVILEGES ON DATABASE cr TO system;
+
+\c cr
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+CREATE FUNCTION set_updated_at() RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'UPDATE') THEN
+        NEW.updated_at := now();
+        return NEW;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;

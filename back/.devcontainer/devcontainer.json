@@ -16,7 +16,8 @@
     "extensions": [
         "ms-python.python",
         "ms-azuretools.vscode-docker",
-        "ms-python.black-formatter"
+        "ms-python.black-formatter",
+        "cweijan.vscode-postgresql-client2",
     ],
-    "forwardPorts": ["splash:8050"]
+    "forwardPorts": ["splash:8050", "postgres:5432"]
 }
