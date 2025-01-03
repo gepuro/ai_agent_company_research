@@ -1,0 +1,16 @@
+FROM python:3.13
+
+# /workspaceに移動
+WORKDIR /workspace
+
+ADD pyproject.toml .
+ADD poetry.lock .
+ADD app app
+
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir poetry && \
+    poetry config virtualenvs.create false && \
+    poetry install --only main --no-interaction --no-ansi
+
+EXPOSE 3030
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "3030"]

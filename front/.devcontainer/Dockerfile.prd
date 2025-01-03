@@ -1,0 +1,30 @@
+FROM node:22.3.0-slim
+# ENV HOST 0.0.0.0
+# ENV HOST localhost
+
+WORKDIR /opt/svelte
+ADD package.json /opt/svelte/package.json
+ADD package-lock.json /opt/svelte/package-lock.json
+
+RUN npm install
+
+ADD .svelte-kit /opt/svelte/.svelte-kit
+ADD src /opt/svelte/src
+ADD static /opt/svelte/static
+# ADD tests /opt/svelte/tests
+# ADD .eslintignore /opt/svelte/.eslintignore
+ADD eslint.config.js /opt/svelte/eslint.config.js
+ADD .npmrc /opt/svelte/.npmrc
+ADD .prettierignore /opt/svelte/.prettierignore
+ADD .prettierrc /opt/svelte/.prettierrc
+ADD playwright.config.ts /opt/svelte/playwright.config.ts
+ADD postcss.config.js /opt/svelte/postcss.config.js
+ADD svelte.config.js /opt/svelte/svelte.config.js
+ADD tailwind.config.ts /opt/svelte/tailwind.config.ts
+ADD tsconfig.json /opt/svelte/tsconfig.json
+ADD vite.config.ts /opt/svelte/vite.config.ts
+
+
+RUN npm run build
+EXPOSE 5173
+CMD ["node", "./build"]

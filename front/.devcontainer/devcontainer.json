@@ -1,0 +1,17 @@
+{
+    "name": "AI Agent Company Researcher Frontend",
+    "service": "workspace",
+    "dockerComposeFile": "docker-compose.yml",
+    "workspaceFolder": "/opt/svelte",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.shell.linux": "/bin/bash",
+                "editor.formatOnSave": true
+            }
+        }
+    },
+    "extensions": [
+        "svelte.svelte-vscode"
+    ],
+}

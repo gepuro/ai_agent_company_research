@@ -1,0 +1,20 @@
+services:
+  workspace:
+    container_name: ai-agent-company-research-front
+    build: 
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    environment: 
+      TZ: "Asia/Tokyo"
+      # HOST: "0.0.0.0"
+      HOST: "localhost"
+    # ports:
+    #   - 5173:5173
+    tty: true
+    volumes:
+      - ..:/opt/svelte
+
+networks:
+  default:
+    name: app-net
+    external: true
