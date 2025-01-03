@@ -9,22 +9,22 @@ services:
       PYTHONPATH: /workspace
     volumes:
       - ..:/workspace
-  splash:
-    image: scrapinghub/splash
-    container_name: ai-agent-company-research-splash
-    # ports:
-    #   - 8050:8050
-    entrypoint:
-     - "python3"
-     - "/app/bin/splash"
-     - "--proxy-profiles-path"
-     - "/etc/splash/proxy-profiles"
-     - "--js-profiles-path"
-     - "/etc/splash/js-profiles"
-     - "--filters-path"
-     - "/etc/splash/filters"
-     - "--lua-package-path"
-     - "/etc/splash/lua_modules/?.lua"
+  # splash:
+  #   image: scrapinghub/splash
+  #   container_name: ai-agent-company-research-splash
+  #   # ports:
+  #   #   - 8050:8050
+  #   entrypoint:
+  #    - "python3"
+  #    - "/app/bin/splash"
+  #    - "--proxy-profiles-path"
+  #    - "/etc/splash/proxy-profiles"
+  #    - "--js-profiles-path"
+  #    - "/etc/splash/js-profiles"
+  #    - "--filters-path"
+  #    - "/etc/splash/filters"
+  #    - "--lua-package-path"
+  #    - "/etc/splash/lua_modules/?.lua"
   postgres:
     build:
       context: ..

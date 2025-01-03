@@ -48,8 +48,9 @@ async def fetch_page_with_tool(url):
     except:
         res = None
 
-    if res is None:
-        res = await fetch_page_with_splash(url)
+    # splashを利用する場合はコメントアウトを外す
+    # if res is None:
+    #     res = await fetch_page_with_splash(url)
     return res
 
 
@@ -65,7 +66,7 @@ async def fetch_page_with_splash(url):
     return res
 
 
-@retry(stop=stop_after_attempt(2) | stop_after_delay(10))
+@retry(stop=stop_after_attempt(3) | stop_after_delay(10))
 async def fetch_page_with_httpx(url):
     logger.info(f"fetching {url} with httpx")
     user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
