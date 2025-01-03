@@ -7,9 +7,10 @@ import time
 def tidy_response(data):
     """
     データを整理し、corporate_number ごとにまとめ、
-    同じ要素を統合し、各データ項目にsource URLを含める。
+    同じ要素を統合し、各データ項目にsource URLのリストを含める。
     corporate_number が null の場合は、企業名をキーとする。
     法人番号を特定できるデータを優先して、データをまとめる。
+    valueが空文字の場合は除外する。
 
     Args:
         data (list): データを含むリスト。
@@ -26,14 +27,14 @@ def tidy_response(data):
             company_name = None
             corporate_number = item.get("corporate_number")
             company_data = {
-                "name": {"value": None, "source": None},
-                "representatives": {"value": [], "source": None},
-                "features": {"value": None, "source": None},
-                "phone_number": {"value": None, "source": None},
-                "email": {"value": None, "source": None},
-                "headquarters_location": {"value": None, "source": None},
-                "establishment_year": {"value": None, "source": None},
-                "business_activities": {"value": None, "source": None},
+                "name": {"value": None, "source": []},
+                "representatives": {"value": [], "source": []},
+                "features": {"value": None, "source": []},
+                "phone_number": {"value": None, "source": []},
+                "email": {"value": None, "source": []},
+                "headquarters_location": {"value": None, "source": []},
+                "establishment_year": {"value": None, "source": []},
+                "business_activities": {"value": None, "source": []},
                 "sales": {},
                 "employees": {},
                 "offices": {},
@@ -41,161 +42,178 @@ def tidy_response(data):
                 "stores": {},
                 "net_profit": {},
                 "capital": {},
-                "company_history": {"value": None, "source": None},
-                "philosophy": {"value": None, "source": None},
-                "strengths": {"value": [], "source": None},
-                "weaknesses": {"value": [], "source": None},
-                "opportunities": {"value": [], "source": None},
-                "threats": {"value": [], "source": None},
-                "competitors": {"value": [], "source": None},
-                "businesses": {"value": [], "source": None},
+                "company_history": {"value": None, "source": []},
+                "philosophy": {"value": None, "source": []},
+                "strengths": {"value": [], "source": []},
+                "weaknesses": {"value": [], "source": []},
+                "opportunities": {"value": [], "source": []},
+                "threats": {"value": [], "source": []},
+                "competitors": {"value": [], "source": []},
+                "businesses": {"value": [], "source": []},
                 "human_resources": {
-                    "ideal": {"value": None, "source": None},
-                    "skills": {"value": [], "source": None},
+                    "ideal": {"value": None, "source": []},
+                    "skills": {"value": [], "source": []},
                 },
                 "corporate_number": corporate_number,
             }
 
             for entry in response:
-                if entry.get("name") == "会社名":
-                    company_data["name"]["value"] = entry.get("value")
-                    company_data["name"]["source"] = source_url
-                    company_name = entry.get("value")
-                elif entry.get("name") == "代表者":
-                    if entry.get("value"):
-                        representatives = [
-                            rep.strip() for rep in entry.get("value").split("、")
-                        ]
-                        company_data["representatives"]["value"].extend(representatives)
-                        company_data["representatives"]["source"] = source_url
-                elif entry.get("name") == "特色":
-                    company_data["features"]["value"] = entry.get("value")
-                    company_data["features"]["source"] = source_url
-                elif entry.get("name") == "電話番号":
-                    company_data["phone_number"]["value"] = (
-                        entry.get("value") if entry.get("value") != "非公開" else None
+                value = entry.get("value")
+                if entry.get("name") == "会社名" and value:
+                    company_data["name"]["value"] = value
+                    company_data["name"]["source"].append(source_url)
+                    company_name = value
+                elif entry.get("name") == "代表者" and value:
+                    representatives = [rep.strip() for rep in value.split("、")]
+                    company_data["representatives"]["value"].extend(representatives)
+                    company_data["representatives"]["source"].append(source_url)
+                elif entry.get("name") == "特色" and value:
+                    company_data["features"]["value"] = value
+                    company_data["features"]["source"].append(source_url)
+                elif entry.get("name") == "電話番号" and value and value != "非公開":
+                    company_data["phone_number"]["value"] = value
+                    company_data["phone_number"]["source"].append(source_url)
+                elif (
+                    entry.get("name") == "メールアドレス"
+                    and value
+                    and value != "非公開"
+                ):
+                    company_data["email"]["value"] = value
+                    company_data["email"]["source"].append(source_url)
+                elif entry.get("name") == "本社所在地" and value:
+                    company_data["headquarters_location"]["value"] = value
+                    company_data["headquarters_location"]["source"].append(source_url)
+                elif entry.get("name") == "設立年" and value:
+                    company_data["establishment_year"]["value"] = value
+                    company_data["establishment_year"]["source"].append(source_url)
+                elif entry.get("name") == "事業内容" and value:
+                    company_data["business_activities"]["value"] = value
+                    company_data["business_activities"]["source"].append(source_url)
+                elif (
+                    entry.get("name") == "売上高"
+                    and entry["year"]
+                    and value is not None
+                ):
+                    company_data["sales"][entry["year"]] = {
+                        "value": value,
+                        "source": [source_url],
+                    }
+                elif (
+                    entry.get("name") == "従業員数"
+                    and entry["year"]
+                    and value is not None
+                ):
+                    company_data["employees"][entry["year"]] = {
+                        "value": value,
+                        "source": [source_url],
+                    }
+                elif (
+                    entry.get("name") == "店舗数"
+                    and entry["year"]
+                    and value is not None
+                ):
+                    company_data["stores"][entry["year"]] = {
+                        "value": value,
+                        "source": [source_url],
+                    }
+                elif (
+                    entry.get("name") == "事業所数"
+                    and entry["year"]
+                    and value is not None
+                ):
+                    company_data["offices"][entry["year"]] = {
+                        "value": value,
+                        "source": [source_url],
+                    }
+                elif (
+                    entry.get("name") == "工場数"
+                    and entry["year"]
+                    and value is not None
+                ):
+                    company_data["factories"][entry["year"]] = {
+                        "value": value,
+                        "source": [source_url],
+                    }
+                elif (
+                    entry.get("name") == "当期純利益"
+                    and entry["year"]
+                    and value is not None
+                ):
+                    company_data["net_profit"][entry["year"]] = {
+                        "value": value,
+                        "source": [source_url],
+                    }
+                elif (
+                    entry.get("name") == "資本金"
+                    and entry["year"]
+                    and value is not None
+                ):
+                    company_data["capital"][entry["year"]] = {
+                        "value": value,
+                        "source": [source_url],
+                    }
+                elif entry.get("name") == "企業の沿革" and value:
+                    company_data["company_history"]["value"] = value
+                    company_data["company_history"]["source"].append(source_url)
+                elif entry.get("name") == "理念" and value:
+                    company_data["philosophy"]["value"] = value
+                    company_data["philosophy"]["source"].append(source_url)
+                elif entry.get("name") == "強み" and value:
+                    strengths = [
+                        s.strip()
+                        for s in value.replace("\n", "").split("・")
+                        if s.strip()
+                    ]
+                    company_data["strengths"]["value"].extend(strengths)
+                    company_data["strengths"]["source"].append(source_url)
+                elif entry.get("name") == "弱み" and value:
+                    weaknesses = [
+                        s.strip()
+                        for s in value.replace("\n", "").split("・")
+                        if s.strip()
+                    ]
+                    company_data["weaknesses"]["value"].extend(weaknesses)
+                    company_data["weaknesses"]["source"].append(source_url)
+                elif entry.get("name") == "機会" and value:
+                    opportunities = [
+                        s.strip()
+                        for s in value.replace("\n", "").split("・")
+                        if s.strip()
+                    ]
+                    company_data["opportunities"]["value"].extend(opportunities)
+                    company_data["opportunities"]["source"].append(source_url)
+                elif entry.get("name") == "脅威" and value:
+                    threats = [
+                        s.strip()
+                        for s in value.replace("\n", "").split("・")
+                        if s.strip()
+                    ]
+                    company_data["threats"]["value"].extend(threats)
+                    company_data["threats"]["source"].append(source_url)
+                elif entry.get("name").startswith("競合企業") and value:
+                    company_data["competitors"]["value"].append(value)
+                    company_data["competitors"]["source"].append(source_url)
+                elif entry.get("name").startswith("事業") and value:
+                    company_data["businesses"]["value"].append(value)
+                    company_data["businesses"]["source"].append(source_url)
+                elif entry.get("name") == "求める人材像" and value:
+                    company_data["human_resources"]["ideal"]["value"] = value
+                    company_data["human_resources"]["ideal"]["source"].append(
+                        source_url
                     )
-                    company_data["phone_number"]["source"] = source_url
-                elif entry.get("name") == "メールアドレス":
-                    company_data["email"]["value"] = (
-                        entry.get("value") if entry.get("value") != "非公開" else None
+                elif entry.get("name").startswith("スキル") and value:
+                    company_data["human_resources"]["skills"]["value"].append(value)
+                    company_data["human_resources"]["skills"]["source"].append(
+                        source_url
                     )
-                    company_data["email"]["source"] = source_url
-                elif entry.get("name") == "本社所在地":
-                    company_data["headquarters_location"]["value"] = entry.get("value")
-                    company_data["headquarters_location"]["source"] = source_url
-                elif entry.get("name") == "設立年":
-                    company_data["establishment_year"]["value"] = entry.get("value")
-                    company_data["establishment_year"]["source"] = source_url
-                elif entry.get("name") == "事業内容":
-                    company_data["business_activities"]["value"] = entry.get("value")
-                    company_data["business_activities"]["source"] = source_url
-                elif entry.get("name") == "売上高":
-                    if entry["year"] and entry.get("value") is not None:
-                        company_data["sales"][entry["year"]] = {
-                            "value": entry.get("value"),
-                            "source": source_url,
-                        }
-                elif entry.get("name") == "従業員数":
-                    if entry["year"] and entry.get("value") is not None:
-                        company_data["employees"][entry["year"]] = {
-                            "value": entry.get("value"),
-                            "source": source_url,
-                        }
-                elif entry.get("name") == "店舗数":
-                    if entry["year"] and entry.get("value") is not None:
-                        company_data["stores"][entry["year"]] = {
-                            "value": entry.get("value"),
-                            "source": source_url,
-                        }
-                elif entry.get("name") == "事業所数":
-                    if entry["year"] and entry.get("value") is not None:
-                        company_data["offices"][entry["year"]] = {
-                            "value": entry.get("value"),
-                            "source": source_url,
-                        }
-                elif entry.get("name") == "工場数":
-                    if entry["year"] and entry.get("value") is not None:
-                        company_data["factories"][entry["year"]] = {
-                            "value": entry.get("value"),
-                            "source": source_url,
-                        }
-                elif entry.get("name") == "当期純利益":
-                    if entry["year"] and entry.get("value") is not None:
-                        company_data["net_profit"][entry["year"]] = {
-                            "value": entry.get("value"),
-                            "source": source_url,
-                        }
-                elif entry.get("name") == "資本金":
-                    if entry["year"] and entry.get("value") is not None:
-                        company_data["capital"][entry["year"]] = {
-                            "value": entry.get("value"),
-                            "source": source_url,
-                        }
-                elif entry.get("name") == "企業の沿革":
-                    company_data["company_history"]["value"] = entry.get("value")
-                    company_data["company_history"]["source"] = source_url
-                elif entry.get("name") == "理念":
-                    company_data["philosophy"]["value"] = entry.get("value")
-                    company_data["philosophy"]["source"] = source_url
-                elif entry.get("name") == "強み":
-                    if entry.get("value"):
-                        strengths = [
-                            s.strip()
-                            for s in entry.get("value").replace("\n", "").split("・")
-                            if s.strip()
-                        ]
-                        company_data["strengths"]["value"].extend(strengths)
-                        company_data["strengths"]["source"] = source_url
-                elif entry.get("name") == "弱み":
-                    if entry.get("value"):
-                        weaknesses = [
-                            s.strip()
-                            for s in entry.get("value").replace("\n", "").split("・")
-                            if s.strip()
-                        ]
-                        company_data["weaknesses"]["value"].extend(weaknesses)
-                        company_data["weaknesses"]["source"] = source_url
-                elif entry.get("name") == "機会":
-                    if entry.get("value"):
-                        opportunities = [
-                            s.strip()
-                            for s in entry.get("value").replace("\n", "").split("・")
-                            if s.strip()
-                        ]
-                        company_data["opportunities"]["value"].extend(opportunities)
-                        company_data["opportunities"]["source"] = source_url
-                elif entry.get("name") == "脅威":
-                    if entry.get("value"):
-                        threats = [
-                            s.strip()
-                            for s in entry.get("value").replace("\n", "").split("・")
-                            if s.strip()
-                        ]
-                        company_data["threats"]["value"].extend(threats)
-                        company_data["threats"]["source"] = source_url
-                elif entry.get("name").startswith("競合企業"):
-                    if entry.get("value"):
-                        company_data["competitors"]["value"].append(entry.get("value"))
-                        company_data["competitors"]["source"] = source_url
-                elif entry.get("name").startswith("事業"):
-                    if entry.get("value"):
-                        company_data["businesses"]["value"].append(entry.get("value"))
-                        company_data["businesses"]["source"] = source_url
-                elif entry.get("name") == "求める人材像":
-                    company_data["human_resources"]["ideal"]["value"] = entry.get(
-                        "value"
-                    )
-                    company_data["human_resources"]["ideal"]["source"] = source_url
-                elif entry.get("name").startswith("スキル"):
-                    company_data["human_resources"]["skills"]["value"].append(
-                        entry.get("value")
-                    )
-                    company_data["human_resources"]["skills"]["source"] = source_url
 
             # 会社名をキーにする。株式会社や合同会社は取り除く
-            key = company_name.replace("株式会社", "").replace("合同会社", "")
-            if key.find("情報が不足") > -1 or len(key) == 0:
+            key = (
+                company_name.replace("株式会社", "").replace("合同会社", "")
+                if company_name
+                else None
+            )
+            if not key or key.find("情報が不足") > -1 or len(key) == 0:
                 # keyに「情報が不足」が含まれる場合、会社名が取得できなかったため、スキップ
                 # keyの例: Webサイトの情報が不足しているため、会社名を確認できません。
                 continue
@@ -239,111 +257,149 @@ def tidy_response(data):
                     company_data["human_resources"]["skills"]["value"]
                 )
                 # ソース情報をマージ
-                if company_data["representatives"]["source"]:
-                    existing_data["representatives"]["source"] = company_data[
-                        "representatives"
-                    ]["source"]
-                if company_data["strengths"]["source"]:
-                    existing_data["strengths"]["source"] = company_data["strengths"][
-                        "source"
-                    ]
-                if company_data["weaknesses"]["source"]:
-                    existing_data["weaknesses"]["source"] = company_data["weaknesses"][
-                        "source"
-                    ]
-                if company_data["opportunities"]["source"]:
-                    existing_data["opportunities"]["source"] = company_data[
-                        "opportunities"
-                    ]["source"]
-                if company_data["threats"]["source"]:
-                    existing_data["threats"]["source"] = company_data["threats"][
-                        "source"
-                    ]
-                if company_data["competitors"]["source"]:
-                    existing_data["competitors"]["source"] = company_data[
-                        "competitors"
-                    ]["source"]
-                if company_data["businesses"]["source"]:
-                    existing_data["businesses"]["source"] = company_data["businesses"][
-                        "source"
-                    ]
-                if company_data["human_resources"]["skills"]["source"]:
-                    existing_data["human_resources"]["skills"]["source"] = company_data[
-                        "human_resources"
-                    ]["skills"]["source"]
+                existing_data["representatives"]["source"].extend(
+                    company_data["representatives"]["source"]
+                )
+                existing_data["strengths"]["source"].extend(
+                    company_data["strengths"]["source"]
+                )
+                existing_data["weaknesses"]["source"].extend(
+                    company_data["weaknesses"]["source"]
+                )
+                existing_data["opportunities"]["source"].extend(
+                    company_data["opportunities"]["source"]
+                )
+                existing_data["threats"]["source"].extend(
+                    company_data["threats"]["source"]
+                )
+                existing_data["competitors"]["source"].extend(
+                    company_data["competitors"]["source"]
+                )
+                existing_data["businesses"]["source"].extend(
+                    company_data["businesses"]["source"]
+                )
+                existing_data["human_resources"]["skills"]["source"].extend(
+                    company_data["human_resources"]["skills"]["source"]
+                )
 
                 # 既存のデータを更新する
                 if company_data["name"]["value"]:
                     existing_data["name"]["value"] = company_data["name"]["value"]
-                    existing_data["name"]["source"] = company_data["name"]["source"]
+                    existing_data["name"]["source"].extend(
+                        company_data["name"]["source"]
+                    )
                 if company_data["features"]["value"]:
                     existing_data["features"]["value"] = company_data["features"][
                         "value"
                     ]
-                    existing_data["features"]["source"] = company_data["features"][
-                        "source"
-                    ]
+                    existing_data["features"]["source"].extend(
+                        company_data["features"]["source"]
+                    )
                 if company_data["phone_number"]["value"]:
                     existing_data["phone_number"]["value"] = company_data[
                         "phone_number"
                     ]["value"]
-                    existing_data["phone_number"]["source"] = company_data[
-                        "phone_number"
-                    ]["source"]
+                    existing_data["phone_number"]["source"].extend(
+                        company_data["phone_number"]["source"]
+                    )
                 if company_data["email"]["value"]:
                     existing_data["email"]["value"] = company_data["email"]["value"]
-                    existing_data["email"]["source"] = company_data["email"]["source"]
+                    existing_data["email"]["source"].extend(
+                        company_data["email"]["source"]
+                    )
                 if company_data["headquarters_location"]["value"]:
                     existing_data["headquarters_location"]["value"] = company_data[
                         "headquarters_location"
                     ]["value"]
-                    existing_data["headquarters_location"]["source"] = company_data[
-                        "headquarters_location"
-                    ]["source"]
+                    existing_data["headquarters_location"]["source"].extend(
+                        company_data["headquarters_location"]["source"]
+                    )
                 if company_data["establishment_year"]["value"]:
                     existing_data["establishment_year"]["value"] = company_data[
                         "establishment_year"
                     ]["value"]
-                    existing_data["establishment_year"]["source"] = company_data[
-                        "establishment_year"
-                    ]["source"]
+                    existing_data["establishment_year"]["source"].extend(
+                        company_data["establishment_year"]["source"]
+                    )
                 if company_data["business_activities"]["value"]:
                     existing_data["business_activities"]["value"] = company_data[
                         "business_activities"
                     ]["value"]
-                    existing_data["business_activities"]["source"] = company_data[
-                        "business_activities"
-                    ]["source"]
+                    existing_data["business_activities"]["source"].extend(
+                        company_data["business_activities"]["source"]
+                    )
                 if company_data["company_history"]["value"]:
                     existing_data["company_history"]["value"] = company_data[
                         "company_history"
                     ]["value"]
-                    existing_data["company_history"]["source"] = company_data[
-                        "company_history"
-                    ]["source"]
+                    existing_data["company_history"]["source"].extend(
+                        company_data["company_history"]["source"]
+                    )
                 if company_data["philosophy"]["value"]:
                     existing_data["philosophy"]["value"] = company_data["philosophy"][
                         "value"
                     ]
-                    existing_data["philosophy"]["source"] = company_data["philosophy"][
-                        "source"
-                    ]
+                    existing_data["philosophy"]["source"].extend(
+                        company_data["philosophy"]["source"]
+                    )
                 if company_data["human_resources"]["ideal"]["value"]:
                     existing_data["human_resources"]["ideal"]["value"] = company_data[
                         "human_resources"
                     ]["ideal"]["value"]
-                    existing_data["human_resources"]["ideal"]["source"] = company_data[
-                        "human_resources"
-                    ]["ideal"]["source"]
+                    existing_data["human_resources"]["ideal"]["source"].extend(
+                        company_data["human_resources"]["ideal"]["source"]
+                    )
 
                 # 辞書型の値をupdateする
-                existing_data["sales"].update(company_data["sales"])
-                existing_data["employees"].update(company_data["employees"])
-                existing_data["offices"].update(company_data["offices"])
-                existing_data["factories"].update(company_data["factories"])
-                existing_data["stores"].update(company_data["stores"])
-                existing_data["net_profit"].update(company_data["net_profit"])
-                existing_data["capital"].update(company_data["capital"])
+                for year, sales_data in company_data["sales"].items():
+                    if year in existing_data["sales"]:
+                        existing_data["sales"][year]["source"].extend(
+                            sales_data["source"]
+                        )
+                    else:
+                        existing_data["sales"][year] = sales_data
+                for year, employees_data in company_data["employees"].items():
+                    if year in existing_data["employees"]:
+                        existing_data["employees"][year]["source"].extend(
+                            employees_data["source"]
+                        )
+                    else:
+                        existing_data["employees"][year] = employees_data
+                for year, offices_data in company_data["offices"].items():
+                    if year in existing_data["offices"]:
+                        existing_data["offices"][year]["source"].extend(
+                            offices_data["source"]
+                        )
+                    else:
+                        existing_data["offices"][year] = offices_data
+                for year, factories_data in company_data["factories"].items():
+                    if year in existing_data["factories"]:
+                        existing_data["factories"][year]["source"].extend(
+                            factories_data["source"]
+                        )
+                    else:
+                        existing_data["factories"][year] = factories_data
+                for year, stores_data in company_data["stores"].items():
+                    if year in existing_data["stores"]:
+                        existing_data["stores"][year]["source"].extend(
+                            stores_data["source"]
+                        )
+                    else:
+                        existing_data["stores"][year] = stores_data
+                for year, net_profit_data in company_data["net_profit"].items():
+                    if year in existing_data["net_profit"]:
+                        existing_data["net_profit"][year]["source"].extend(
+                            net_profit_data["source"]
+                        )
+                    else:
+                        existing_data["net_profit"][year] = net_profit_data
+                for year, capital_data in company_data["capital"].items():
+                    if year in existing_data["capital"]:
+                        existing_data["capital"][year]["source"].extend(
+                            capital_data["source"]
+                        )
+                    else:
+                        existing_data["capital"][year] = capital_data
 
                 # 重複を削除
                 existing_data["representatives"]["value"] = list(
@@ -370,6 +426,101 @@ def tidy_response(data):
                 existing_data["human_resources"]["skills"]["value"] = list(
                     set(existing_data["human_resources"]["skills"]["value"])
                 )
+
+                # ソースの重複を削除
+                existing_data["representatives"]["source"] = list(
+                    set(existing_data["representatives"]["source"])
+                )
+                existing_data["strengths"]["source"] = list(
+                    set(existing_data["strengths"]["source"])
+                )
+                existing_data["weaknesses"]["source"] = list(
+                    set(existing_data["weaknesses"]["source"])
+                )
+                existing_data["opportunities"]["source"] = list(
+                    set(existing_data["opportunities"]["source"])
+                )
+                existing_data["threats"]["source"] = list(
+                    set(existing_data["threats"]["source"])
+                )
+                existing_data["competitors"]["source"] = list(
+                    set(existing_data["competitors"]["source"])
+                )
+                existing_data["businesses"]["source"] = list(
+                    set(existing_data["businesses"]["source"])
+                )
+                existing_data["human_resources"]["skills"]["source"] = list(
+                    set(existing_data["human_resources"]["skills"]["source"])
+                )
+                if existing_data["name"]["source"]:
+                    existing_data["name"]["source"] = list(
+                        set(existing_data["name"]["source"])
+                    )
+                if existing_data["features"]["source"]:
+                    existing_data["features"]["source"] = list(
+                        set(existing_data["features"]["source"])
+                    )
+                if existing_data["phone_number"]["source"]:
+                    existing_data["phone_number"]["source"] = list(
+                        set(existing_data["phone_number"]["source"])
+                    )
+                if existing_data["email"]["source"]:
+                    existing_data["email"]["source"] = list(
+                        set(existing_data["email"]["source"])
+                    )
+                if existing_data["headquarters_location"]["source"]:
+                    existing_data["headquarters_location"]["source"] = list(
+                        set(existing_data["headquarters_location"]["source"])
+                    )
+                if existing_data["establishment_year"]["source"]:
+                    existing_data["establishment_year"]["source"] = list(
+                        set(existing_data["establishment_year"]["source"])
+                    )
+                if existing_data["business_activities"]["source"]:
+                    existing_data["business_activities"]["source"] = list(
+                        set(existing_data["business_activities"]["source"])
+                    )
+                if existing_data["company_history"]["source"]:
+                    existing_data["company_history"]["source"] = list(
+                        set(existing_data["company_history"]["source"])
+                    )
+                if existing_data["philosophy"]["source"]:
+                    existing_data["philosophy"]["source"] = list(
+                        set(existing_data["philosophy"]["source"])
+                    )
+                if existing_data["human_resources"]["ideal"]["source"]:
+                    existing_data["human_resources"]["ideal"]["source"] = list(
+                        set(existing_data["human_resources"]["ideal"]["source"])
+                    )
+
+                for year, sales_data in existing_data["sales"].items():
+                    existing_data["sales"][year]["source"] = list(
+                        set(sales_data["source"])
+                    )
+                for year, employees_data in existing_data["employees"].items():
+                    existing_data["employees"][year]["source"] = list(
+                        set(employees_data["source"])
+                    )
+                for year, offices_data in existing_data["offices"].items():
+                    existing_data["offices"][year]["source"] = list(
+                        set(offices_data["source"])
+                    )
+                for year, factories_data in existing_data["factories"].items():
+                    existing_data["factories"][year]["source"] = list(
+                        set(factories_data["source"])
+                    )
+                for year, stores_data in existing_data["stores"].items():
+                    existing_data["stores"][year]["source"] = list(
+                        set(stores_data["source"])
+                    )
+                for year, net_profit_data in existing_data["net_profit"].items():
+                    existing_data["net_profit"][year]["source"] = list(
+                        set(net_profit_data["source"])
+                    )
+                for year, capital_data in existing_data["capital"].items():
+                    existing_data["capital"][year]["source"] = list(
+                        set(capital_data["source"])
+                    )
 
                 processed_data[key] = existing_data  # 更新したデータを格納
 
@@ -819,7 +970,7 @@ def tidy_with_gemini(data):
 
         for key1, key2, key3, task in tasks:
             value = task.result()
-            print(f"{key1=}, {key2=}, {key3=}, {value=}")
+            # print(f"{key1=}, {key2=}, {key3=}, {value=}")
             # "['山田 太郎']" を ['山田 太郎'] に変換
             value = value.replace("'", '"')
             value = json.loads(value)

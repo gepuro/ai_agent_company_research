@@ -29,6 +29,6 @@ async def fetch_sales(COMAPNY_NAME):
             db, f"{COMAPNY_NAME} 売上", OUTPUT_FORMAT
         )
         await db.close()
-        return response
+        return rag.delete_nouse_content(response, ["代表者"])
     except Exception as e:
         return []

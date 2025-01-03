@@ -350,6 +350,12 @@ async def rag_company(db=Depends(session.get_db), corporate_number: str | None =
         db=db, corporate_number=corporate_number
     )
 
+    tidied_response = await cache.fetch_cache_company(
+        db=db, corporate_number=corporate_number
+    )
+    if tidied_response:
+        return json.loads(tidied_response[0]["response"])
+
     COMAPNY_NAME = company[0].get("company_name")
     AREA = company[0].get("prefecture_name")
 

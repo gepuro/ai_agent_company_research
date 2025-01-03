@@ -11,31 +11,31 @@
 		[key: string]: {
 			corporate_number?: string;
 			name?: { value: string };
-			representatives?: { value: string[]; source?: string };
-			features?: { value: string; source?: string };
-			phone_number?: { value: string; source?: string };
-			email?: { value: string; source?: string };
-			headquarters_location?: { value: string; source?: string };
-			establishment_year?: { value: string; source?: string };
-			business_activities?: { value: string; source?: string };
-			sales?: { [year: string]: { value: string; source?: string } };
-			employees?: { [year: string]: { value: string; source?: string } };
-			offices?: { [year: string]: { value: string; source?: string } };
-			factories?: { [year: string]: { value: string; source?: string } };
-			stores?: { [year: string]: { value: string; source?: string } };
-			net_profit?: { [year: string]: { value: string; source?: string } };
-			capital?: { [year: string]: { value: string; source?: string } };
-			company_history?: { value: string; source?: string };
-			philosophy?: { value: string; source?: string };
-			strengths?: { value: string[]; source?: string };
-			weaknesses?: { value: string[]; source?: string };
-			opportunities?: { value: string[]; source?: string };
-			threats?: { value: string[]; source?: string };
-			competitors?: { value: string[]; source?: string };
-			businesses?: { value: string[]; source?: string };
+			representatives?: { value: string[]; source?: string[] };
+			features?: { value: string; source?: string[] };
+			phone_number?: { value: string; source?: string[] };
+			email?: { value: string; source?: string[] };
+			headquarters_location?: { value: string; source?: string[] };
+			establishment_year?: { value: string; source?: string[] };
+			business_activities?: { value: string; source?: string[] };
+			sales?: { [year: string]: { value: string; source?: string[] } };
+			employees?: { [year: string]: { value: string; source?: string[] } };
+			offices?: { [year: string]: { value: string; source?: string[] } };
+			factories?: { [year: string]: { value: string; source?: string[] } };
+			stores?: { [year: string]: { value: string; source?: string[] } };
+			net_profit?: { [year: string]: { value: string; source?: string[] } };
+			capital?: { [year: string]: { value: string; source?: string[] } };
+			company_history?: { value: string; source?: string[] };
+			philosophy?: { value: string; source?: string[] };
+			strengths?: { value: string[]; source?: string[] };
+			weaknesses?: { value: string[]; source?: string[] };
+			opportunities?: { value: string[]; source?: string[] };
+			threats?: { value: string[]; source?: string[] };
+			competitors?: { value: string[]; source?: string[] };
+			businesses?: { value: string[]; source?: string[] };
 			human_resources?: {
-				ideal?: { value: string; source?: string };
-				skills?: { value: string[]; source?: string };
+				ideal?: { value: string; source?: string[] };
+				skills?: { value: string[]; source?: string[] };
 			};
 		};
 	};
@@ -120,14 +120,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						代表者
 						{#if streamedData[selectedCompany].representatives?.source}
-							<a
-								href={streamedData[selectedCompany].representatives?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].representatives?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<ul class="list-disc pl-5">
@@ -142,14 +144,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						特徴
 						{#if streamedData[selectedCompany].features?.source}
-							<a
-								href={streamedData[selectedCompany].features?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].features?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<p>{streamedData[selectedCompany].features?.value}</p>
@@ -159,14 +163,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						電話番号
 						{#if streamedData[selectedCompany].phone_number?.source}
-							<a
-								href={streamedData[selectedCompany].phone_number?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].phone_number?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<p>{streamedData[selectedCompany].phone_number?.value}</p>
@@ -176,14 +182,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						メールアドレス
 						{#if streamedData[selectedCompany].email?.source}
-							<a
-								href={streamedData[selectedCompany].email?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].email?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<p>{streamedData[selectedCompany].email?.value}</p>
@@ -193,14 +201,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						本社所在地
 						{#if streamedData[selectedCompany].headquarters_location?.source}
-							<a
-								href={streamedData[selectedCompany].headquarters_location?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].headquarters_location?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<p>{streamedData[selectedCompany].headquarters_location?.value}</p>
@@ -211,14 +221,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						企業理念
 						{#if streamedData[selectedCompany].philosophy?.source}
-							<a
-								href={streamedData[selectedCompany].philosophy?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].philosophy?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<p>{streamedData[selectedCompany].philosophy?.value}</p>
@@ -229,14 +241,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						強み
 						{#if streamedData[selectedCompany].strengths?.source}
-							<a
-								href={streamedData[selectedCompany].strengths?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].strengths?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<ul class="list-disc pl-5">
@@ -251,14 +265,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						弱み
 						{#if streamedData[selectedCompany].weaknesses?.source}
-							<a
-								href={streamedData[selectedCompany].weaknesses?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].weaknesses?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<ul class="list-disc pl-5">
@@ -273,14 +289,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						機会
 						{#if streamedData[selectedCompany].opportunities?.source}
-							<a
-								href={streamedData[selectedCompany].opportunities?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].opportunities?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<ul class="list-disc pl-5">
@@ -295,14 +313,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						脅威
 						{#if streamedData[selectedCompany].threats?.source}
-							<a
-								href={streamedData[selectedCompany].threats?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].threats?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<ul class="list-disc pl-5">
@@ -317,14 +337,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						競合他社
 						{#if streamedData[selectedCompany].competitors?.source}
-							<a
-								href={streamedData[selectedCompany].competitors?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].competitors?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<ul class="list-disc pl-5">
@@ -339,14 +361,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						事業
 						{#if streamedData[selectedCompany].businesses?.source}
-							<a
-								href={streamedData[selectedCompany].businesses?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].businesses?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<ul class="list-disc pl-5">
@@ -361,28 +385,32 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						人材
 						{#if streamedData[selectedCompany].human_resources?.source}
-							<a
-								href={streamedData[selectedCompany].human_resources?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
-						{/if}
-					</h2>
-					<div class="mb-4">
-						<h3 class="font-medium">
-							理想の人材像
-							{#if streamedData[selectedCompany].human_resources?.ideal?.source}
+							{#each streamedData[selectedCompany].human_resources?.source as source}
 								<a
-									href={streamedData[selectedCompany].human_resources?.ideal?.source}
+									href={source}
 									target="_blank"
 									rel="noopener noreferrer"
 									class="ml-2 text-sm text-blue-500 hover:underline"
 								>
 									(情報源)
 								</a>
+							{/each}
+						{/if}
+					</h2>
+					<div class="mb-4">
+						<h3 class="font-medium">
+							理想の人材像
+							{#if streamedData[selectedCompany].human_resources?.ideal?.source}
+								{#each streamedData[selectedCompany].human_resources?.ideal?.source as source}
+									<a
+										href={source}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="ml-2 text-sm text-blue-500 hover:underline"
+									>
+										(情報源)
+									</a>
+								{/each}
 							{/if}
 						</h3>
 						<p>{streamedData[selectedCompany].human_resources?.ideal?.value}</p>
@@ -391,14 +419,16 @@
 						<h3 class="font-medium">
 							必要なスキル
 							{#if streamedData[selectedCompany].human_resources?.skills?.source}
-								<a
-									href={streamedData[selectedCompany].human_resources?.skills?.source}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="ml-2 text-sm text-blue-500 hover:underline"
-								>
-									(情報源)
-								</a>
+								{#each streamedData[selectedCompany].human_resources?.skills?.source as source}
+									<a
+										href={source}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="ml-2 text-sm text-blue-500 hover:underline"
+									>
+										(情報源)
+									</a>
+								{/each}
 							{/if}
 						</h3>
 						<ul class="list-disc pl-5">
@@ -414,14 +444,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						事業内容
 						{#if streamedData[selectedCompany].business_activities?.source}
-							<a
-								href={streamedData[selectedCompany].business_activities?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].business_activities?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<p>{streamedData[selectedCompany].business_activities?.value}</p>
@@ -432,14 +464,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						会社沿革
 						{#if streamedData[selectedCompany].company_history?.source}
-							<a
-								href={streamedData[selectedCompany].company_history?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].company_history?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<p>{streamedData[selectedCompany].company_history?.value}</p>
@@ -449,14 +483,16 @@
 					<h2 class="mb-2 text-xl font-semibold">
 						設立年
 						{#if streamedData[selectedCompany].establishment_year?.source}
-							<a
-								href={streamedData[selectedCompany].establishment_year?.source}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-sm text-blue-500 hover:underline"
-							>
-								(情報源)
-							</a>
+							{#each streamedData[selectedCompany].establishment_year?.source as source}
+								<a
+									href={source}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="ml-2 text-sm text-blue-500 hover:underline"
+								>
+									(情報源)
+								</a>
+							{/each}
 						{/if}
 					</h2>
 					<p>{streamedData[selectedCompany].establishment_year?.value}</p>
@@ -471,12 +507,14 @@
 								<li class="mb-2">
 									<span class="font-medium">{year}</span>: <span>{saleData.value}</span>
 									{#if saleData.source}
-										<a
-											href={saleData.source}
-											target="_blank"
-											rel="noopener noreferrer"
-											class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
-										>
+										{#each saleData.source as source}
+											<a
+												href={source}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
+											>
+										{/each}
 									{/if}
 								</li>
 							{/each}
@@ -493,12 +531,14 @@
 								<li class="mb-2">
 									<span class="font-medium">{year}</span>: <span>{employeeData.value}</span>
 									{#if employeeData.source}
-										<a
-											href={employeeData.source}
-											target="_blank"
-											rel="noopener noreferrer"
-											class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
-										>
+										{#each employeeData.source as source}
+											<a
+												href={source}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
+											>
+										{/each}
 									{/if}
 								</li>
 							{/each}
@@ -515,12 +555,14 @@
 								<li class="mb-2">
 									<span class="font-medium">{year}</span>: <span>{officeData.value}</span>
 									{#if officeData.source}
-										<a
-											href={officeData.source}
-											target="_blank"
-											rel="noopener noreferrer"
-											class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
-										>
+										{#each officeData.source as source}
+											<a
+												href={source}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
+											>
+										{/each}
 									{/if}
 								</li>
 							{/each}
@@ -537,12 +579,14 @@
 								<li class="mb-2">
 									<span class="font-medium">{year}</span>: <span>{factoryData.value}</span>
 									{#if factoryData.source}
-										<a
-											href={factoryData.source}
-											target="_blank"
-											rel="noopener noreferrer"
-											class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
-										>
+										{#each factoryData.source as source}
+											<a
+												href={source}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
+											>
+										{/each}
 									{/if}
 								</li>
 							{/each}
@@ -559,12 +603,14 @@
 								<li class="mb-2">
 									<span class="font-medium">{year}</span>: <span>{storeData.value}</span>
 									{#if storeData.source}
-										<a
-											href={storeData.source}
-											target="_blank"
-											rel="noopener noreferrer"
-											class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
-										>
+										{#each storeData.source as source}
+											<a
+												href={source}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
+											>
+										{/each}
 									{/if}
 								</li>
 							{/each}
@@ -581,12 +627,14 @@
 								<li class="mb-2">
 									<span class="font-medium">{year}</span>: <span>{profitData.value}</span>
 									{#if profitData.source}
-										<a
-											href={profitData.source}
-											target="_blank"
-											rel="noopener noreferrer"
-											class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
-										>
+										{#each profitData.source as source}
+											<a
+												href={source}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
+											>
+										{/each}
 									{/if}
 								</li>
 							{/each}
@@ -603,12 +651,14 @@
 								<li class="mb-2">
 									<span class="font-medium">{year}</span>: <span>{capitalData.value}</span>
 									{#if capitalData.source}
-										<a
-											href={capitalData.source}
-											target="_blank"
-											rel="noopener noreferrer"
-											class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
-										>
+										{#each capitalData.source as source}
+											<a
+												href={source}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="ml-2 text-sm text-blue-500 hover:underline">(情報源)</a
+											>
+										{/each}
 									{/if}
 								</li>
 							{/each}

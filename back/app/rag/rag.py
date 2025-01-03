@@ -91,3 +91,11 @@ async def rag_with_googlesearch(
         response=json.dumps(responses, ensure_ascii=False),
     )
     return responses
+
+
+def delete_nouse_content(response, names):
+    for item in response:
+        for record in item.get("response", []):
+            if record.get("name") in names:
+                record["value"] = ""
+    return response

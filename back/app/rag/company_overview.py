@@ -42,7 +42,10 @@ async def fetch_company_overview(COMAPNY_NAME):
     try:
         db = session.SessionLocal()
         response = await rag.rag_with_googlesearch(
-            db, f"{COMAPNY_NAME} 会社概要", OUTPUT_FORMAT
+            db,
+            f"{COMAPNY_NAME} 会社概要",
+            OUTPUT_FORMAT,
+            prompt=f"{COMAPNY_NAME}の事業内容を調査してください。",
         )
         await db.close()
         return response

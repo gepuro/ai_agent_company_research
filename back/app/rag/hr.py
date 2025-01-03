@@ -24,6 +24,6 @@ async def fetch_hr(COMAPNY_NAME):
             prompt=f"{COMAPNY_NAME}の求める人材像を調査してください。",
         )
         await db.close()
-        return response
+        return rag.delete_nouse_content(response, ["代表者"])
     except Exception as e:
         return []

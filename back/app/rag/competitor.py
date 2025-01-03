@@ -23,6 +23,6 @@ async def fetch_company_competitor(COMAPNY_NAME):
             prompt=f"{COMAPNY_NAME}の競合企業を調査してください。",
         )
         await db.close()
-        return response
+        return rag.delete_nouse_content(response, ["代表者"])
     except Exception as e:
         return []
