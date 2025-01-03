@@ -618,9 +618,9 @@
 					{/if}
 				</div>
 
-				<!-- 純利益 -->
+				<!-- 営業利益 -->
 				<div class="mb-8">
-					<h2 class="mb-2 text-xl font-semibold">純利益</h2>
+					<h2 class="mb-2 text-xl font-semibold">営業利益</h2>
 					{#if streamedData[selectedCompany].net_profit}
 						<ul>
 							{#each Object.entries(streamedData[selectedCompany].net_profit) as [year, profitData]}

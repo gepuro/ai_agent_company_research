@@ -39,7 +39,9 @@ async def main():
         # "https://gepuro.net"
         # "https://www.sony.com/ja/SonyInfo/IR/library/presen/er/archive.html"
         # "https://www.nitori.co.jp/about_us/corporate_data.html"
-        "https://semi-journal.jp/career/company/sony.html"
+        # "https://semi-journal.jp/career/company/sony.html"
+        # "https://global.toyota/jp/ir/finance/index.html"
+        "https://dena.com/jp/ir/finance/highlight.html"
     )
     with open("response.md", "w") as f:
         f.write(response["markdown"])

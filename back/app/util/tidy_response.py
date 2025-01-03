@@ -11,6 +11,7 @@ def tidy_response(data):
     corporate_number が null の場合は、企業名をキーとする。
     法人番号を特定できるデータを優先して、データをまとめる。
     valueが空文字の場合は除外する。
+    情報量が多い方を優先して更新する。情報量は文字数で判定する。
 
     Args:
         data (list): データを含むリスト。
@@ -135,7 +136,7 @@ def tidy_response(data):
                         "source": [source_url],
                     }
                 elif (
-                    entry.get("name") == "当期純利益"
+                    entry.get("name") == "営業利益"
                     and entry["year"]
                     and value is not None
                 ):
@@ -283,66 +284,106 @@ def tidy_response(data):
                 )
 
                 # 既存のデータを更新する
-                if company_data["name"]["value"]:
+                if company_data["name"]["value"] and (
+                    not existing_data["name"]["value"]
+                    or len(company_data["name"]["value"])
+                    > len(existing_data["name"]["value"])
+                ):
                     existing_data["name"]["value"] = company_data["name"]["value"]
                     existing_data["name"]["source"].extend(
                         company_data["name"]["source"]
                     )
-                if company_data["features"]["value"]:
+                if company_data["features"]["value"] and (
+                    not existing_data["features"]["value"]
+                    or len(company_data["features"]["value"])
+                    > len(existing_data["features"]["value"])
+                ):
                     existing_data["features"]["value"] = company_data["features"][
                         "value"
                     ]
                     existing_data["features"]["source"].extend(
                         company_data["features"]["source"]
                     )
-                if company_data["phone_number"]["value"]:
+                if company_data["phone_number"]["value"] and (
+                    not existing_data["phone_number"]["value"]
+                    or len(company_data["phone_number"]["value"])
+                    > len(existing_data["phone_number"]["value"])
+                ):
                     existing_data["phone_number"]["value"] = company_data[
                         "phone_number"
                     ]["value"]
                     existing_data["phone_number"]["source"].extend(
                         company_data["phone_number"]["source"]
                     )
-                if company_data["email"]["value"]:
+                if company_data["email"]["value"] and (
+                    not existing_data["email"]["value"]
+                    or len(company_data["email"]["value"])
+                    > len(existing_data["email"]["value"])
+                ):
                     existing_data["email"]["value"] = company_data["email"]["value"]
                     existing_data["email"]["source"].extend(
                         company_data["email"]["source"]
                     )
-                if company_data["headquarters_location"]["value"]:
+                if company_data["headquarters_location"]["value"] and (
+                    not existing_data["headquarters_location"]["value"]
+                    or len(company_data["headquarters_location"]["value"])
+                    > len(existing_data["headquarters_location"]["value"])
+                ):
                     existing_data["headquarters_location"]["value"] = company_data[
                         "headquarters_location"
                     ]["value"]
                     existing_data["headquarters_location"]["source"].extend(
                         company_data["headquarters_location"]["source"]
                     )
-                if company_data["establishment_year"]["value"]:
+                if company_data["establishment_year"]["value"] and (
+                    not existing_data["establishment_year"]["value"]
+                    or len(company_data["establishment_year"]["value"])
+                    > len(existing_data["establishment_year"]["value"])
+                ):
                     existing_data["establishment_year"]["value"] = company_data[
                         "establishment_year"
                     ]["value"]
                     existing_data["establishment_year"]["source"].extend(
                         company_data["establishment_year"]["source"]
                     )
-                if company_data["business_activities"]["value"]:
+                if company_data["business_activities"]["value"] and (
+                    not existing_data["business_activities"]["value"]
+                    or len(company_data["business_activities"]["value"])
+                    > len(existing_data["business_activities"]["value"])
+                ):
                     existing_data["business_activities"]["value"] = company_data[
                         "business_activities"
                     ]["value"]
                     existing_data["business_activities"]["source"].extend(
                         company_data["business_activities"]["source"]
                     )
-                if company_data["company_history"]["value"]:
+                if company_data["company_history"]["value"] and (
+                    not existing_data["company_history"]["value"]
+                    or len(company_data["company_history"]["value"])
+                    > len(existing_data["company_history"]["value"])
+                ):
                     existing_data["company_history"]["value"] = company_data[
                         "company_history"
                     ]["value"]
                     existing_data["company_history"]["source"].extend(
                         company_data["company_history"]["source"]
                     )
-                if company_data["philosophy"]["value"]:
+                if company_data["philosophy"]["value"] and (
+                    not existing_data["philosophy"]["value"]
+                    or len(company_data["philosophy"]["value"])
+                    > len(existing_data["philosophy"]["value"])
+                ):
                     existing_data["philosophy"]["value"] = company_data["philosophy"][
                         "value"
                     ]
                     existing_data["philosophy"]["source"].extend(
                         company_data["philosophy"]["source"]
                     )
-                if company_data["human_resources"]["ideal"]["value"]:
+                if company_data["human_resources"]["ideal"]["value"] and (
+                    not existing_data["human_resources"]["ideal"]["value"]
+                    or len(company_data["human_resources"]["ideal"]["value"])
+                    > len(existing_data["human_resources"]["ideal"]["value"])
+                ):
                     existing_data["human_resources"]["ideal"]["value"] = company_data[
                         "human_resources"
                     ]["ideal"]["value"]
@@ -353,6 +394,14 @@ def tidy_response(data):
                 # 辞書型の値をupdateする
                 for year, sales_data in company_data["sales"].items():
                     if year in existing_data["sales"]:
+                        if (
+                            len(sales_data["value"])
+                            > len(existing_data["sales"][year]["value"])
+                            if isinstance(sales_data["value"], str)
+                            and isinstance(existing_data["sales"][year]["value"], str)
+                            else True
+                        ):
+                            existing_data["sales"][year] = sales_data
                         existing_data["sales"][year]["source"].extend(
                             sales_data["source"]
                         )
@@ -360,6 +409,16 @@ def tidy_response(data):
                         existing_data["sales"][year] = sales_data
                 for year, employees_data in company_data["employees"].items():
                     if year in existing_data["employees"]:
+                        if (
+                            len(employees_data["value"])
+                            > len(existing_data["employees"][year]["value"])
+                            if isinstance(employees_data["value"], str)
+                            and isinstance(
+                                existing_data["employees"][year]["value"], str
+                            )
+                            else True
+                        ):
+                            existing_data["employees"][year] = employees_data
                         existing_data["employees"][year]["source"].extend(
                             employees_data["source"]
                         )
@@ -367,6 +426,14 @@ def tidy_response(data):
                         existing_data["employees"][year] = employees_data
                 for year, offices_data in company_data["offices"].items():
                     if year in existing_data["offices"]:
+                        if (
+                            len(offices_data["value"])
+                            > len(existing_data["offices"][year]["value"])
+                            if isinstance(offices_data["value"], str)
+                            and isinstance(existing_data["offices"][year]["value"], str)
+                            else True
+                        ):
+                            existing_data["offices"][year] = offices_data
                         existing_data["offices"][year]["source"].extend(
                             offices_data["source"]
                         )
@@ -374,6 +441,16 @@ def tidy_response(data):
                         existing_data["offices"][year] = offices_data
                 for year, factories_data in company_data["factories"].items():
                     if year in existing_data["factories"]:
+                        if (
+                            len(factories_data["value"])
+                            > len(existing_data["factories"][year]["value"])
+                            if isinstance(factories_data["value"], str)
+                            and isinstance(
+                                existing_data["factories"][year]["value"], str
+                            )
+                            else True
+                        ):
+                            existing_data["factories"][year] = factories_data
                         existing_data["factories"][year]["source"].extend(
                             factories_data["source"]
                         )
@@ -381,6 +458,14 @@ def tidy_response(data):
                         existing_data["factories"][year] = factories_data
                 for year, stores_data in company_data["stores"].items():
                     if year in existing_data["stores"]:
+                        if (
+                            len(stores_data["value"])
+                            > len(existing_data["stores"][year]["value"])
+                            if isinstance(stores_data["value"], str)
+                            and isinstance(existing_data["stores"][year]["value"], str)
+                            else True
+                        ):
+                            existing_data["stores"][year] = stores_data
                         existing_data["stores"][year]["source"].extend(
                             stores_data["source"]
                         )
@@ -388,6 +473,16 @@ def tidy_response(data):
                         existing_data["stores"][year] = stores_data
                 for year, net_profit_data in company_data["net_profit"].items():
                     if year in existing_data["net_profit"]:
+                        if (
+                            len(net_profit_data["value"])
+                            > len(existing_data["net_profit"][year]["value"])
+                            if isinstance(net_profit_data["value"], str)
+                            and isinstance(
+                                existing_data["net_profit"][year]["value"], str
+                            )
+                            else True
+                        ):
+                            existing_data["net_profit"][year] = net_profit_data
                         existing_data["net_profit"][year]["source"].extend(
                             net_profit_data["source"]
                         )
@@ -395,6 +490,14 @@ def tidy_response(data):
                         existing_data["net_profit"][year] = net_profit_data
                 for year, capital_data in company_data["capital"].items():
                     if year in existing_data["capital"]:
+                        if (
+                            len(capital_data["value"])
+                            > len(existing_data["capital"][year]["value"])
+                            if isinstance(capital_data["value"], str)
+                            and isinstance(existing_data["capital"][year]["value"], str)
+                            else True
+                        ):
+                            existing_data["capital"][year] = capital_data
                         existing_data["capital"][year]["source"].extend(
                             capital_data["source"]
                         )
@@ -566,9 +669,9 @@ if __name__ == "__main__":
                 {"name": "工場数", "year": "2024", "value": None},
                 {"name": "工場数", "year": "2023", "value": None},
                 {"name": "工場数", "year": "2022", "value": None},
-                {"name": "当期純利益", "year": "2024", "value": None},
-                {"name": "当期純利益", "year": "2023", "value": None},
-                {"name": "当期純利益", "year": "2022", "value": None},
+                {"name": "営業利益", "year": "2024", "value": None},
+                {"name": "営業利益", "year": "2023", "value": None},
+                {"name": "営業利益", "year": "2022", "value": None},
                 {"name": "資本金", "year": "2024", "value": "8,814億円"},
                 {"name": "資本金", "year": "2023", "value": None},
                 {"name": "資本金", "year": "2022", "value": None},
@@ -606,9 +709,9 @@ if __name__ == "__main__":
                 {"name": "工場数", "year": "2024", "value": None},
                 {"name": "工場数", "year": "2023", "value": None},
                 {"name": "工場数", "year": "2022", "value": None},
-                {"name": "当期純利益", "year": "2024", "value": None},
-                {"name": "当期純利益", "year": "2023", "value": None},
-                {"name": "当期純利益", "year": "2022", "value": None},
+                {"name": "営業利益", "year": "2024", "value": None},
+                {"name": "営業利益", "year": "2023", "value": None},
+                {"name": "営業利益", "year": "2022", "value": None},
                 {"name": "資本金", "year": "2024", "value": "30億円"},
                 {"name": "資本金", "year": "2023", "value": None},
                 {"name": "資本金", "year": "2022", "value": None},
@@ -652,9 +755,9 @@ if __name__ == "__main__":
                 {"name": "工場数", "year": "2024", "value": "非公開"},
                 {"name": "工場数", "year": "2023", "value": "非公開"},
                 {"name": "工場数", "year": "2022", "value": "非公開"},
-                {"name": "当期純利益", "year": "2024", "value": "非公開"},
-                {"name": "当期純利益", "year": "2023", "value": "約8000億円"},
-                {"name": "当期純利益", "year": "2022", "value": "約7000億円"},
+                {"name": "営業利益", "year": "2024", "value": "非公開"},
+                {"name": "営業利益", "year": "2023", "value": "約8000億円"},
+                {"name": "営業利益", "year": "2022", "value": "約7000億円"},
                 {"name": "資本金", "year": "2024", "value": "非公開"},
                 {"name": "資本金", "year": "2023", "value": "非公開"},
                 {"name": "資本金", "year": "2022", "value": "非公開"},
@@ -773,9 +876,9 @@ if __name__ == "__main__":
                 {"name": "従業員数", "year": "2024", "value": "約11万人"},
                 {"name": "従業員数", "year": "2023", "value": None},
                 {"name": "従業員数", "year": "2022", "value": None},
-                {"name": "当期純利益", "year": "2024", "value": "4,177億円"},
-                {"name": "当期純利益", "year": "2023", "value": None},
-                {"name": "当期純利益", "year": "2022", "value": None},
+                {"name": "営業利益", "year": "2024", "value": "4,177億円"},
+                {"name": "営業利益", "year": "2023", "value": None},
+                {"name": "営業利益", "year": "2022", "value": None},
                 {"name": "資本金", "year": "2024", "value": None},
                 {"name": "資本金", "year": "2023", "value": None},
                 {"name": "資本金", "year": "2022", "value": None},
@@ -794,9 +897,9 @@ if __name__ == "__main__":
                 {"name": "従業員数", "year": "2024", "value": None},
                 {"name": "従業員数", "year": "2023", "value": None},
                 {"name": "従業員数", "year": "2022", "value": None},
-                {"name": "当期純利益", "year": "2024", "value": None},
-                {"name": "当期純利益", "year": "2023", "value": None},
-                {"name": "当期純利益", "year": "2022", "value": None},
+                {"name": "営業利益", "year": "2024", "value": None},
+                {"name": "営業利益", "year": "2023", "value": None},
+                {"name": "営業利益", "year": "2022", "value": None},
                 {"name": "資本金", "year": "2024", "value": None},
                 {"name": "資本金", "year": "2023", "value": None},
                 {"name": "資本金", "year": "2022", "value": None},

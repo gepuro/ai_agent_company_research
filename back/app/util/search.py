@@ -70,7 +70,7 @@ async def fetch_page_with_splash(url):
 async def fetch_page_with_httpx(url):
     logger.info(f"fetching {url} with httpx")
     user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(follow_redirects=True) as client:
         res = await client.get(url, timeout=10, headers={"User-Agent": user_agent})
     return res
 
