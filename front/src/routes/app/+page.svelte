@@ -56,6 +56,11 @@
 	<div class="mt-10 w-full max-w-md">
 		<div class="relative">
 			<h1 class="mb-4 text-2xl font-bold">3分で企業研究</h1>
+		</div>
+	</div>
+	<div class="mt-10 w-full max-w-md">
+		<div class="relative">
+			<!-- <img src="/image/logo.jpg" alt="企業研究" class="h-20 rounded-full" /> -->
 			<input
 				type="text"
 				class="w-full rounded border p-3 focus:border-blue-500 focus:outline-none focus:ring"
