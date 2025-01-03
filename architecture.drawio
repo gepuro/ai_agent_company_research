@@ -40,7 +40,7 @@
         <mxCell id="pGmlumF4uRX_qSD4XHm6-16" value="Gemini" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="470" y="230" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="pGmlumF4uRX_qSD4XHm6-17" value="カスタムサーチAPI" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="pGmlumF4uRX_qSD4XHm6-17" value="Custom Search JSON API" style="rounded=0;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="1">
           <mxGeometry x="630" y="230" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="pGmlumF4uRX_qSD4XHm6-20" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="pGmlumF4uRX_qSD4XHm6-4">
