@@ -1,4 +1,7 @@
 import json
+from app.util import gemini
+import concurrent.futures
+import time
 
 
 def tidy_response(data):
@@ -6,6 +9,7 @@ def tidy_response(data):
     データを整理し、corporate_number ごとにまとめ、
     同じ要素を統合し、各データ項目にsource URLを含める。
     corporate_number が null の場合は、企業名をキーとする。
+    法人番号を特定できるデータを優先して、データをまとめる。
 
     Args:
         data (list): データを含むリスト。
@@ -20,7 +24,7 @@ def tidy_response(data):
             response = item["response"]
             source_url = item.get("source")
             company_name = None
-            corporate_number = None
+            corporate_number = item.get("corporate_number")
             company_data = {
                 "name": {"value": None, "source": None},
                 "representatives": {"value": [], "source": None},
@@ -49,7 +53,7 @@ def tidy_response(data):
                     "ideal": {"value": None, "source": None},
                     "skills": {"value": [], "source": None},
                 },
-                "corporate_number": None,
+                "corporate_number": corporate_number,
             }
 
             for entry in response:
@@ -189,16 +193,25 @@ def tidy_response(data):
                     )
                     company_data["human_resources"]["skills"]["source"] = source_url
 
-            corporate_number = item.get("corporate_number")
-            company_data["corporate_number"] = corporate_number
-
-            key = corporate_number if corporate_number else company_name
+            # 会社名をキーにする。株式会社や合同会社は取り除く
+            key = company_name.replace("株式会社", "").replace("合同会社", "")
+            if key.find("情報が不足") > -1 or len(key) == 0:
+                # keyに「情報が不足」が含まれる場合、会社名が取得できなかったため、スキップ
+                # keyの例: Webサイトの情報が不足しているため、会社名を確認できません。
+                continue
 
             if key not in processed_data:
                 processed_data[key] = company_data
             else:
                 # 既存のデータと新しいデータをマージ
                 existing_data = processed_data[key]
+
+                # 法人番号が既存データにない場合、新しいデータで更新
+                if (
+                    not existing_data["corporate_number"]
+                    and company_data["corporate_number"]
+                ):
+                    existing_data["corporate_number"] = company_data["corporate_number"]
 
                 # リストをextendする
                 existing_data["representatives"]["value"].extend(
@@ -763,3 +776,54 @@ if __name__ == "__main__":
     ]
     processed_data = tidy_response(data)
     print(json.dumps(processed_data, indent=4, ensure_ascii=False))
+
+
+def delete_duplicate(data):
+    response = gemini.gemini(
+        f"""
+        情報が重複するデータを削除してください。
+
+        不要なデータの例:
+         - 該当情報なし
+         - 不明
+
+        入力データ: ```
+        {data}
+        ```
+
+        出力フォーマット: ```
+        ["AAA", "BBB", "CCC"]
+        ```
+
+        """
+    )
+    return json.loads(response.candidates[0].content.parts[0].text)["response"]
+
+
+def tidy_with_gemini(data):
+    tasks = []
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        for key1, value1 in data.items():
+            if isinstance(value1, dict):
+                for key2, value2 in value1.items():
+                    # 重複判定対象以外はスキップ
+                    if key2 not in ["representatives"]:
+                        continue
+
+                    if isinstance(value2, dict):
+                        for key3, inner_value in value2.items():
+                            if key3 == "value":
+                                task = executor.submit(delete_duplicate, inner_value)
+                                tasks.append((key1, key2, key3, task))
+
+        for key1, key2, key3, task in tasks:
+            value = task.result()
+            print(f"{key1=}, {key2=}, {key3=}, {value=}")
+            # "['山田 太郎']" を ['山田 太郎'] に変換
+            value = value.replace("'", '"')
+            value = json.loads(value)
+
+            data[key1][key2][key3] = value
+
+    return data

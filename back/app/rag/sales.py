@@ -1,4 +1,5 @@
 from app.rag import rag
+from app.db import session
 
 OUTPUT_FORMAT = """
 [
@@ -22,4 +23,12 @@ OUTPUT_FORMAT = """
 
 
 async def fetch_sales(COMAPNY_NAME):
-    return await rag.rag_with_googlesearch(f"{COMAPNY_NAME} 売上", OUTPUT_FORMAT)
+    try:
+        db = session.SessionLocal()
+        response = await rag.rag_with_googlesearch(
+            db, f"{COMAPNY_NAME} 売上", OUTPUT_FORMAT
+        )
+        await db.close()
+        return response
+    except Exception as e:
+        return []

@@ -4,6 +4,9 @@ version = "0.1.0"
 description = ""
 authors = ["gepuro <gepuro@gmail.com>"]
 readme = "README.md"
+packages = [
+    { include = "app" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.13"
@@ -23,6 +26,7 @@ pandas = "^2.2.3"
 duckduckgo-search = "^7.1.1"
 fastapi = "^0.115.6"
 uvicorn = "^0.34.0"
+tenacity = "^9.0.0"
 
 
 [build-system]

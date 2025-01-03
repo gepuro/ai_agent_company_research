@@ -1,5 +1,5 @@
 services:
-  workspace:
+  backend:
     container_name: ai-agent-company-research-backend
     build: 
       context: ..

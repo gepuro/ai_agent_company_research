@@ -65,3 +65,61 @@ class CorporateSite(session.Base):
     domain = Column(String, nullable=False, default="")
     created_at = Column(DateTime, nullable=False, server_default=current_timestamp())
     updated_at = Column(DateTime, nullable=False, server_default=current_timestamp())
+
+
+# CREATE TABLE "cache_url" (
+#   "url" varchar(512) PRIMARY KEY,
+#   "response" text NOT NULL DEFAULT '',
+#   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#   "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+# )
+class CacheUrl(session.Base):
+    __tablename__ = "cache_url"
+    url = Column(String, primary_key=True)
+    response = Column(Text, nullable=False, default="")
+    created_at = Column(DateTime, nullable=False, server_default=current_timestamp())
+    updated_at = Column(DateTime, nullable=False, server_default=current_timestamp())
+
+
+# CREATE TABLE "cache_gemini" (
+#   "url" varchar(512) PRIMARY KEY,
+#   "model" varchar(512) NOT NULL DEFAULT '',
+#   "response" text NOT NULL DEFAULT '',
+#   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#   "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+# )
+class CacheGemini(session.Base):
+    __tablename__ = "cache_gemini"
+    url = Column(String, primary_key=True)
+    model = Column(String, nullable=False, default="")
+    response = Column(Text, nullable=False, default="")
+    created_at = Column(DateTime, nullable=False, server_default=current_timestamp())
+    updated_at = Column(DateTime, nullable=False, server_default=current_timestamp())
+
+
+# CREATE TABLE "cache_google" (
+#   "search_word" varchar(512) PRIMARY KEY,
+#   "response" text NOT NULL DEFAULT '',
+#   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#   "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+# )
+class CacheGoogle(session.Base):
+    __tablename__ = "cache_google"
+    search_word = Column(String, primary_key=True)
+    response = Column(Text, nullable=False, default="")
+    created_at = Column(DateTime, nullable=False, server_default=current_timestamp())
+    updated_at = Column(DateTime, nullable=False, server_default=current_timestamp())
+
+
+# CREATE TABLE "cache_company" (
+#   "corporate_number" varchar(13) PRIMARY KEY,
+#   "response" text NOT NULL DEFAULT '',
+#   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#   "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+# )
+class CacheCompany(session.Base):
+    __tablename__ = "cache_company"
+    corporate_number = Column(String, primary_key=True)
+    response = Column(Text, nullable=False, default="")
+    created_at = Column(DateTime, nullable=False, server_default=current_timestamp())
+    updated_at = Column(DateTime, nullable=False, server_default=current_timestamp())

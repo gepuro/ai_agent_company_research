@@ -20,7 +20,11 @@ async def fetch_houjin_bangou_with_condition(
     ):
         return None
 
-    query = select(models.HoujinBangou.corporate_number)
+    query = select(
+        models.HoujinBangou.corporate_number,
+        models.HoujinBangou.company_name,
+        models.HoujinBangou.prefecture_name,
+    )
 
     if company_name is not None:
         query = query.filter(models.HoujinBangou.company_name == company_name)
@@ -46,4 +50,15 @@ async def fetch_houjin_bangou_with_pagination(db: AsyncSession, pagination: int)
     result = await db.execute(
         query.limit(page_size).offset(int(page_size * (pagination - 1)))
     )
+    return result.mappings().fetchall()
+
+
+# 企業名の一部を指定して、法人番号と住所を取得する
+async def fetch_houjin_bangou_with_company_name(db: AsyncSession, company_name: str):
+    query = select(
+        models.HoujinBangou.company_name,
+        models.HoujinBangou.corporate_number,
+        models.HoujinBangou.concatenation_address,
+    ).filter(models.HoujinBangou.company_name.like(f"%{company_name}%"))
+    result = await db.execute(query)
     return result.mappings().fetchall()

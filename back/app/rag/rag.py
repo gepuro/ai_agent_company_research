@@ -1,9 +1,14 @@
 from app.util import gemini
 from app.util import search
 import json
+from tenacity import retry, stop_after_attempt, RetryError
+from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
 from app.nayose import nayose
 from loguru import logger
+from app.db.crud import cache
+import json
+from tenacity import retry, stop_after_attempt, stop_after_delay
 
 
 def get_value_from_output_format(output_format, name, year=None):
@@ -17,7 +22,15 @@ def get_value_from_output_format(output_format, name, year=None):
     return None
 
 
-async def rag_with_googlesearch(search_word, output_format, prompt=""):
+@retry(stop=(stop_after_attempt(1) | stop_after_delay(100)))
+async def rag_with_googlesearch(
+    db: AsyncSession, search_word, output_format, prompt=""
+):
+    # キャッシュがあればそれを返す
+    cache_google = await cache.fetch_cache_google(db=db, search_word=search_word)
+    if cache_google:
+        return json.loads(cache_google[0]["response"])
+
     search_results = await search.google(f"{search_word}")
     responses = []
     for search_result in search_results:
@@ -29,6 +42,7 @@ async def rag_with_googlesearch(search_word, output_format, prompt=""):
             {search_result["markdown"]}
             ```
 
+            情報がない項目は、空文字''にしてください。
             出力フォーマット(JSON): ```
             {output_format}
             ```
@@ -45,6 +59,7 @@ async def rag_with_googlesearch(search_word, output_format, prompt=""):
                 response_dict = json.loads(response_dict, strict=False)
 
             corporate_number = await nayose.identify_corporate_number(
+                db,
                 company_name=get_value_from_output_format(response_dict, "会社名"),
                 address=get_value_from_output_format(response_dict, "本社所在地"),
                 url=search_result.get("link"),
@@ -66,7 +81,13 @@ async def rag_with_googlesearch(search_word, output_format, prompt=""):
             # )
             pass
 
-    with open("response.json", "w") as f:
-        f.write(json.dumps(responses, ensure_ascii=False, indent=4))
+    # with open("response.json", "w") as f:
+    #     f.write(json.dumps(responses, ensure_ascii=False, indent=4))
 
+    # キャッシュを追加
+    await cache.add_cache_google(
+        db=db,
+        search_word=search_word,
+        response=json.dumps(responses, ensure_ascii=False),
+    )
     return responses

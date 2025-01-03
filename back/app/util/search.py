@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from tenacity import retry, stop_after_attempt, stop_after_delay
 import json
 from googleapiclient.discovery import build
 import pprint
@@ -11,10 +12,12 @@ import tempfile
 from loguru import logger
 from timeout_executor import AsyncResult, TimeoutExecutor
 from duckduckgo_search import DDGS
+from app.core import config
 
 # GOOGLE_API_KEY = "<取得したAPI鍵>"
 # APIキーの利用は、IP制限をしている。
-with open(".secret/api_key.txt") as f:
+# 鍵の管理: https://console.cloud.google.com/apis/credentials?authuser=0&inv=1&invt=Ablz6g&project=ai-agent-cr-20241229
+with open(config.API_KEY) as f:
     GOOGLE_API_KEY = f.read().strip()
 
 CUSTOM_SEARCH_ENGINE_ID = "57d60b9d0fe3e4a0e"  # https://programmablesearchengine.google.com/controlpanel/all で作成
@@ -39,29 +42,36 @@ def contains_hiragana(text):
     return bool(hiragana_pattern.search(text))
 
 
+async def fetch_page_with_tool(url):
+    try:
+        res = await fetch_page_with_httpx(url)
+    except:
+        res = None
+
+    if res is None:
+        res = await fetch_page_with_splash(url)
+    return res
+
+
+@retry(stop=stop_after_attempt(2) | stop_after_delay(10))
 async def fetch_page_with_splash(url):
     logger.info(f"fetching {url} with splash")
-    try:
-        async with httpx.AsyncClient() as client:
-            res = await client.get(
-                "http://splash:8050/render.html",
-                params={"url": url, "wait": 1, "timeout": 10},
-                timeout=15,
-            )
-        return res
-    except:
-        return None
+    async with httpx.AsyncClient() as client:
+        res = await client.get(
+            "http://splash:8050/render.html",
+            params={"url": url, "wait": 1, "timeout": 10},
+            timeout=10,
+        )
+    return res
 
 
+@retry(stop=stop_after_attempt(2) | stop_after_delay(10))
 async def fetch_page_with_httpx(url):
     logger.info(f"fetching {url} with httpx")
     user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-    try:
-        async with httpx.AsyncClient() as client:
-            res = await client.get(url, timeout=10, headers={"User-Agent": user_agent})
-        return res
-    except:
-        return None
+    async with httpx.AsyncClient() as client:
+        res = await client.get(url, timeout=10, headers={"User-Agent": user_agent})
+    return res
 
 
 async def fetch_page_with_markitdown(url):
@@ -80,9 +90,7 @@ async def fetch_page(url):
     4. MarkitDownを利用
     """
     logger.info(f"fetching {url}")
-    res = await fetch_page_with_splash(url)
-    if res is None:
-        res = await fetch_page_with_httpx(url)
+    res = await fetch_page_with_tool(url)
 
     if res is not None:
         if not contains_hiragana(res.text):
@@ -90,7 +98,8 @@ async def fetch_page(url):
 
     mid = markitdown.MarkItDown()
     if res is None:
-        # return {"url": url, "markdown": ""}
+        # FIXME: markitdownで取得は不安定？要調査
+        return {"url": url, "markdown": ""}
         try:
             executor = TimeoutExecutor(15)
             text_content = executor.apply(fetch_page_with_markitdown, url).result()

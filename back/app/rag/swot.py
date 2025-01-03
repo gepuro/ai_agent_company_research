@@ -1,4 +1,5 @@
 from app.rag import rag
+from app.db import session
 
 OUTPUT_FORMAT = """
 [
@@ -14,8 +15,15 @@ OUTPUT_FORMAT = """
 
 
 async def fetch_company_swot(COMAPNY_NAME):
-    return await rag.rag_with_googlesearch(
-        f"{COMAPNY_NAME} 事業 強み",
-        OUTPUT_FORMAT,
-        prompt="SWOT分析を行ってください。",
-    )
+    try:
+        db = session.SessionLocal()
+        response = await rag.rag_with_googlesearch(
+            db,
+            f"{COMAPNY_NAME} 事業 強み",
+            OUTPUT_FORMAT,
+            prompt="SWOT分析を行ってください。",
+        )
+        await db.close()
+        return response
+    except Exception as e:
+        return []

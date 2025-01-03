@@ -28,7 +28,7 @@ CREATE TABLE "houjin_bangou" (
   "post_code" varchar(16) NOT NULL DEFAULT '',
   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-)
+);
 
 CREATE TABLE "corporate_site" (
   "corporate_number" varchar(13) PRIMARY KEY,
@@ -36,4 +36,33 @@ CREATE TABLE "corporate_site" (
   "domain" varchar(128) NOT NULL DEFAULT '',
   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-)
+);
+
+CREATE TABLE "cache_url" (
+  "url" varchar(512) PRIMARY KEY,
+  "response" text NOT NULL DEFAULT '',
+  "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "cache_gemini" (
+  "url" varchar(512) PRIMARY KEY,
+  "model" varchar(512) NOT NULL DEFAULT '',
+  "response" text NOT NULL DEFAULT '',
+  "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "cache_google" (
+  "search_word" varchar(512) PRIMARY KEY,
+  "response" text NOT NULL DEFAULT '',
+  "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "cache_company" (
+  "corporate_number" varchar(13) PRIMARY KEY,
+  "response" text NOT NULL DEFAULT '',
+  "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

@@ -1,6 +1,6 @@
 {
     "name": "AI Agent Company Researcher Backend",
-    "service": "workspace",
+    "service": "backend",
     "dockerComposeFile": "docker-compose.yml",
     "workspaceFolder": "/workspace",
     "customizations": {

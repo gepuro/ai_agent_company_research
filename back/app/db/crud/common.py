@@ -12,7 +12,7 @@ async def insert_record(db: AsyncSession, record):
         db.add(record)
         await db.commit()
         await db.refresh(record)
-        logger.info(f"{record.__tablename__}: {record.__dict__}")
+        # logger.info(f"{record.__tablename__}: {record.__dict__}")
     except Exception as e:
         await db.rollback()
         raise e
@@ -26,7 +26,7 @@ async def delete_record(db: AsyncSession, model, condition):
             return False
         await db.delete(record)
         await db.commit()
-        logger.info(f"{record.__tablename__}: {record.__dict__}")
+        # logger.info(f"{record.__tablename__}: {record.__dict__}")
         return True
     except Exception as e:
         await db.rollback()
@@ -43,9 +43,9 @@ async def update_record(db: AsyncSession, model, condition, update_value):
             setattr(record, key, value)
         await db.commit()
         await db.refresh(record)
-        logger.info(
-            f"update {model.__tablename__} where {condition} set {update_value}"
-        )
+        # logger.info(
+        #     f"update {model.__tablename__} where {condition} set {update_value}"
+        # )
         return record
     except Exception as e:
         await db.rollback()
@@ -57,10 +57,10 @@ def db_persist(func):
         await func(db, record, *args, **kwargs)
         try:
             await db.commit()
-            logger.info("success calling db func: " + func.__name__)
+            # logger.info("success calling db func: " + func.__name__)
             return True
         except SQLAlchemyError as e:
-            logger.error(e.args)
+            # logger.error(e.args)
             await db.rollback()
             raise e
             # return False
@@ -70,5 +70,5 @@ def db_persist(func):
 
 @db_persist
 async def upsert(db: AsyncSession, record):
-    logger.info(f"{record.__tablename__}: {record.__dict__}")
+    # logger.info(f"{record.__tablename__}: {record.__dict__}")
     return await db.merge(record)

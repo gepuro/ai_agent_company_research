@@ -1,4 +1,5 @@
 from app.rag import rag
+from app.db import session
 
 OUTPUT_FORMAT = """
 [
@@ -13,8 +14,15 @@ OUTPUT_FORMAT = """
 
 
 async def fetch_company_competitor(COMAPNY_NAME):
-    return await rag.rag_with_googlesearch(
-        f"{COMAPNY_NAME} 競合",
-        OUTPUT_FORMAT,
-        prompt=f"{COMAPNY_NAME}の競合企業を調査してください。",
-    )
+    try:
+        db = session.SessionLocal()
+        response = await rag.rag_with_googlesearch(
+            db,
+            f"{COMAPNY_NAME} 競合",
+            OUTPUT_FORMAT,
+            prompt=f"{COMAPNY_NAME}の競合企業を調査してください。",
+        )
+        await db.close()
+        return response
+    except Exception as e:
+        return []

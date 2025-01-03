@@ -8,6 +8,7 @@ __pycache__
 .env.prd
 .env
 back/data
+password.txt
 
 # sphinxの出力結果
 doc/sphinx/_build/

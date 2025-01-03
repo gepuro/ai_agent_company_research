@@ -1,4 +1,5 @@
 import requests
+from app.core import config
 
 
 class GeocodingAPI:
@@ -11,7 +12,8 @@ class GeocodingAPI:
         }
         res = requests.post(
             # f"{config.GEOCODING_URL}/api/v1/address",
-            "http://cr_geocoding:5050/api/v1/address",
+            # "http://cr_geocoding:5050/api/v1/address",
+            config.GEOCODING_URL,
             json={"address": address},
             headers=headers,
         )

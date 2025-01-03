@@ -15,6 +15,8 @@ from fastapi import FastAPI
 from loguru import logger
 from starlette.middleware.cors import CORSMiddleware
 from app.api.v1.routers.rag_router import rag_router
+from app.api.v1.routers.company_router import company_router
+from app.core import config
 
 app = FastAPI(docs_url="/api/docs", openapi_url="/api")
 
@@ -25,6 +27,9 @@ origins = [
     "http://localhost:5137",
     "http://cr_front:3000",
     "http://cr_svelte:5137",
+    "http://localhost:5173",  # フロントエンドのオリジン
+    "http://localhost:3030",  # 必要であればバックエンド自身のオリジンも追加
+    config.FRONT_URL,
 ]
 
 app.add_middleware(
@@ -37,6 +42,7 @@ app.add_middleware(
 
 
 app.include_router(rag_router, prefix="/api/v1", tags=["rag"])
+app.include_router(company_router, prefix="/api/v1", tags=["company"])
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=3030, log_level="debug")
