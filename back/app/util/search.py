@@ -136,7 +136,7 @@ async def fetch_page(url):
                 return {"url": url, "markdown": ""}
 
 
-async def google(KEYWORD):
+async def google(KEYWORD, top_n=3):
     logger.info(f"google search: {KEYWORD}")
 
     # Google Customサーチ結果を取得
@@ -144,11 +144,11 @@ async def google(KEYWORD):
 
     r = (
         s.cse()
-        .list(q=KEYWORD, cx=CUSTOM_SEARCH_ENGINE_ID, lr="lang_ja", num=10, start=1)
+        .list(q=KEYWORD, cx=CUSTOM_SEARCH_ENGINE_ID, lr="lang_ja", num=top_n, start=1)
         .execute()
     )
 
-    items = r["items"][0:3]
+    items = r["items"][0:top_n]
     tasks = []
     for item in items:
         if item.get("mime", "") == "application/pdf":

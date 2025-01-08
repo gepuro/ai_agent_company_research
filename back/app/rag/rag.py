@@ -9,6 +9,7 @@ from loguru import logger
 from app.db.crud import cache
 import json
 from tenacity import retry, stop_after_attempt, stop_after_delay
+from app import rag
 
 
 def get_value_from_output_format(output_format, name, year=None):
@@ -24,14 +25,14 @@ def get_value_from_output_format(output_format, name, year=None):
 
 @retry(stop=(stop_after_attempt(1) | stop_after_delay(100)))
 async def rag_with_googlesearch(
-    db: AsyncSession, search_word, output_format, prompt=""
+    db: AsyncSession, search_word, output_format, prompt="", top_n=3
 ):
     # キャッシュがあればそれを返す
     cache_google = await cache.fetch_cache_google(db=db, search_word=search_word)
     if cache_google:
         return json.loads(cache_google[0]["response"])
 
-    search_results = await search.google(f"{search_word}")
+    search_results = await search.google(f"{search_word}", top_n=top_n)
     responses = []
     for search_result in search_results:
         response = gemini.gemini(

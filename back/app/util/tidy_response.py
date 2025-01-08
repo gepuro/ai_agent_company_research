@@ -1062,7 +1062,7 @@ def tidy_with_gemini(data):
             if isinstance(value1, dict):
                 for key2, value2 in value1.items():
                     # 重複判定対象以外はスキップ
-                    if key2 not in ["representatives"]:
+                    if key2 not in ["representatives", "businesses", "competitors"]:
                         continue
 
                     if isinstance(value2, dict):
