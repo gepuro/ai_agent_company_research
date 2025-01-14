@@ -18,3 +18,5 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE EXTENSION pg_bigm;

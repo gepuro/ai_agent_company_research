@@ -14,6 +14,15 @@ async function fetch_company(event) {
   return data;
 }
 
+async function fetch_company_name(event) {
+  const data = await event.fetch(
+    env.BACKEND_URL + "/api/v1/company/houjin_bangou?corporate_number=" + event.params.corporate_number,
+  ).then((response) => response.json()).then((data) => {
+    return data
+  });
+  return data;
+}
+
 export const load: PageServerLoad = async (event) => {
   // console.log(event.params.corporate_number);
 
@@ -22,6 +31,7 @@ export const load: PageServerLoad = async (event) => {
     corporate_number: event.params.corporate_number,
     streamed: {
       data: fetch_company(event),
+      houjin_bangou: fetch_company_name(event),
     }
   };
 };

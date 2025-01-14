@@ -16,6 +16,7 @@ from app.util import tidy_response, gemini
 import asyncio
 from app.db.crud import houjin_bangou, cache
 from app.db import session
+from loguru import logger
 import json
 
 rag_router = r = APIRouter()
@@ -354,6 +355,7 @@ async def rag_company(db=Depends(session.get_db), corporate_number: str | None =
     tidied_response = await cache.fetch_cache_company(
         db=db, corporate_number=corporate_number
     )
+    logger.info(tidied_response)
     if tidied_response:
         return json.loads(tidied_response[0]["response"])
 
@@ -385,18 +387,20 @@ async def rag_company(db=Depends(session.get_db), corporate_number: str | None =
     ]
     """
 
-    for key in tidied_response:
-        if tidied_response[key]["name"]["value"] != COMAPNY_NAME:
-            continue
+    target_key = [
+        key
+        for key in tidied_response
+        if tidied_response[key]["name"]["value"] == COMAPNY_NAME
+    ][0]
 
-        # print(tidied_response[key])
-
-        response = gemini.gemini(
+    try:
+        response = await gemini.gemini(
+            db=db,
             contents=f"""
             {COMAPNY_NAME}の会社情報を調査しました。
 
             調査したデータ: ```
-            {json.dumps(tidied_response[key], ensure_ascii=False)}
+            {json.dumps(tidied_response[target_key], ensure_ascii=False)}
             ```
 
             欠損データを埋めるために、追加で調査をしたいです。
@@ -405,27 +409,39 @@ async def rag_company(db=Depends(session.get_db), corporate_number: str | None =
             出力フォーマット(JSON): ```
             {output_format}
             ```
-            """
+            """,
         )
         search_words = json.loads(
             json.loads(response.candidates[0].content.parts[0].text)["response"]
         )
-        agent_tasks = [
-            any_search.fetch_any_data(COMAPNY_NAME, search_word["search_word"], top_n=1)
-            for search_word in search_words[0:10]
-        ]
-        agent_tasks_response = await asyncio.gather(*agent_tasks)
-        total_response = defined_tasks_response + agent_tasks_response
-        flattened_response = [item for sublist in total_response for item in sublist]
-        tidied_response = tidy_response.tidy_response(flattened_response)
+    except Exception as e:
+        logger.error(e)
+        search_words = []
+
+    agent_tasks = [
+        any_search.fetch_any_data(COMAPNY_NAME, search_word["search_word"], top_n=1)
+        for search_word in search_words[0:10]
+    ]
+    agent_tasks_response = await asyncio.gather(*agent_tasks)
+    total_response = defined_tasks_response + agent_tasks_response
+    flattened_response = [item for sublist in total_response for item in sublist]
+
+    tidied_response = tidy_response.tidy_response(flattened_response)
+
+    try:
         tidied_response = tidy_response.tidy_with_gemini(tidied_response)
+    except:
+        pass
 
     # import time
     # time.sleep(5)
 
-    await cache.add_cache_company(
-        db=db,
-        corporate_number=corporate_number,
-        response=json.dumps(tidied_response, ensure_ascii=False),
-    )
+    # エラーがおきたときは、キャッシュに保存しない
+    if tidied_response:
+        await cache.add_cache_company(
+            db=db,
+            corporate_number=corporate_number,
+            response=json.dumps(tidied_response, ensure_ascii=False),
+        )
+
     return tidied_response

@@ -46,7 +46,7 @@ CREATE TABLE "cache_url" (
 );
 
 CREATE TABLE "cache_gemini" (
-  "url" varchar(512) PRIMARY KEY,
+  "prompt_hash" varchar(512) PRIMARY KEY,
   "model" varchar(512) NOT NULL DEFAULT '',
   "response" text NOT NULL DEFAULT '',
   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

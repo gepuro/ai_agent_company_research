@@ -136,7 +136,7 @@ async def fetch_page(url):
                 return {"url": url, "markdown": ""}
 
 
-async def google(KEYWORD, top_n=3):
+async def google(KEYWORD, top_n=2):
     logger.info(f"google search: {KEYWORD}")
 
     # Google Customサーチ結果を取得

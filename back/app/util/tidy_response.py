@@ -35,7 +35,7 @@ def tidy_response(data):
                 "email": {"value": None, "source": []},
                 "headquarters_location": {"value": None, "source": []},
                 "establishment_year": {"value": None, "source": []},
-                "business_activities": {"value": None, "source": []},
+                "business_overview": {"value": None, "source": []},
                 "sales": {},
                 "employees": {},
                 "offices": {},
@@ -87,9 +87,9 @@ def tidy_response(data):
                 elif entry.get("name") == "設立年" and value:
                     company_data["establishment_year"]["value"] = value
                     company_data["establishment_year"]["source"].append(source_url)
-                elif entry.get("name") == "事業内容" and value:
-                    company_data["business_activities"]["value"] = value
-                    company_data["business_activities"]["source"].append(source_url)
+                elif entry.get("name") == "事業概要" and value:
+                    company_data["business_overview"]["value"] = value
+                    company_data["business_overview"]["source"].append(source_url)
                 elif (
                     entry.get("name") == "売上高"
                     and entry["year"]
@@ -346,16 +346,16 @@ def tidy_response(data):
                     existing_data["establishment_year"]["source"].extend(
                         company_data["establishment_year"]["source"]
                     )
-                if company_data["business_activities"]["value"] and (
-                    not existing_data["business_activities"]["value"]
-                    or len(company_data["business_activities"]["value"])
-                    > len(existing_data["business_activities"]["value"])
+                if company_data["business_overview"]["value"] and (
+                    not existing_data["business_overview"]["value"]
+                    or len(company_data["business_overview"]["value"])
+                    > len(existing_data["business_overview"]["value"])
                 ):
-                    existing_data["business_activities"]["value"] = company_data[
-                        "business_activities"
+                    existing_data["business_overview"]["value"] = company_data[
+                        "business_overview"
                     ]["value"]
-                    existing_data["business_activities"]["source"].extend(
-                        company_data["business_activities"]["source"]
+                    existing_data["business_overview"]["source"].extend(
+                        company_data["business_overview"]["source"]
                     )
                 if company_data["company_history"]["value"] and (
                     not existing_data["company_history"]["value"]
@@ -579,9 +579,9 @@ def tidy_response(data):
                     existing_data["establishment_year"]["source"] = list(
                         set(existing_data["establishment_year"]["source"])
                     )
-                if existing_data["business_activities"]["source"]:
-                    existing_data["business_activities"]["source"] = list(
-                        set(existing_data["business_activities"]["source"])
+                if existing_data["business_overview"]["source"]:
+                    existing_data["business_overview"]["source"] = list(
+                        set(existing_data["business_overview"]["source"])
                     )
                 if existing_data["company_history"]["source"]:
                     existing_data["company_history"]["source"] = list(
@@ -651,7 +651,7 @@ if __name__ == "__main__":
                 {"name": "本社所在地", "value": "〒108-0075 東京都港区港南1-7-1"},
                 {"name": "設立年", "value": "1946年"},
                 {
-                    "name": "事業内容",
+                    "name": "事業概要",
                     "value": "ゲーム＆ネットワークサービス、音楽、映画、エンタテインメント・テクノロジー＆サービス（モバイル・コミュニケーション/イメージング・プロダクツ＆ソリューション/ホームエンタテインメント＆サウンド）、イメージング＆センシング・ソリューション、金融及びその他の事業",
                 },
                 {"name": "売上高", "year": "2024", "value": None},
@@ -691,7 +691,7 @@ if __name__ == "__main__":
                 {"name": "本社所在地", "value": "〒108-0075 東京都港区港南1-7-1"},
                 {"name": "設立年", "value": "2021年4月1日"},
                 {
-                    "name": "事業内容",
+                    "name": "事業概要",
                     "value": "エンタテインメント・テクノロジー&サービス（ホームエンタテインメント、パーソナルエンタテインメント、イメージングエンタテインメント、プロフェッショナルイメージングテクノロジー、レンズテクノロジー&システム、メディアソリューション、モバイルコミュニケーションズ、ライフサイエンス&テクノロジー、ソフトウェアサービス、スポーツエンタテインメント、セキュアテクノロジー&ソリューション、VPテクノロジー&サービス、ネットワークサービス、他）",
                 },
                 {"name": "売上高", "year": "2024", "value": None},
@@ -737,7 +737,7 @@ if __name__ == "__main__":
                 {"name": "本社所在地", "value": "東京都港区港南1-7-1"},
                 {"name": "設立年", "value": "1946年"},
                 {
-                    "name": "事業内容",
+                    "name": "事業概要",
                     "value": "エレクトロニクス製品の製造販売、ゲーム・ネットワークサービス、音楽・映画制作配給、金融サービスなど",
                 },
                 {"name": "売上高", "year": "2024", "value": "非公開"},
@@ -1033,8 +1033,8 @@ if __name__ == "__main__":
 
 
 def delete_duplicate(data):
-    response = gemini.gemini(
-        f"""
+    response = gemini.gemini_sync(
+        contents=f"""
         情報が重複するデータを削除してください。
 
         不要なデータの例:
@@ -1049,7 +1049,7 @@ def delete_duplicate(data):
         ["AAA", "BBB", "CCC"]
         ```
 
-        """
+        """,
     )
     return json.loads(response.candidates[0].content.parts[0].text)["response"]
 

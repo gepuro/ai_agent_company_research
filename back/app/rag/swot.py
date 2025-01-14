@@ -15,8 +15,8 @@ OUTPUT_FORMAT = """
 
 
 async def fetch_company_swot(COMAPNY_NAME):
+    db = session.SessionLocal()
     try:
-        db = session.SessionLocal()
         response = await rag.rag_with_googlesearch(
             db,
             f"{COMAPNY_NAME} 事業 強み",
@@ -26,4 +26,5 @@ async def fetch_company_swot(COMAPNY_NAME):
         await db.close()
         return rag.delete_nouse_content(response, ["代表者"])
     except Exception as e:
+        await db.close()
         return []

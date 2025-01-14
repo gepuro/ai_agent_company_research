@@ -14,8 +14,8 @@ OUTPUT_FORMAT = """
 
 
 async def fetch_business(COMAPNY_NAME):
+    db = session.SessionLocal()
     try:
-        db = session.SessionLocal()
         response = await rag.rag_with_googlesearch(
             db,
             f"{COMAPNY_NAME} 事業",
@@ -26,4 +26,5 @@ async def fetch_business(COMAPNY_NAME):
         # return response
         return rag.delete_nouse_content(response, ["代表者"])
     except Exception as e:
+        await db.close()
         return []

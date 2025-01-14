@@ -10,7 +10,7 @@ OUTPUT_FORMAT = """
     {"name": "メールアドレス", "value": ""},
     {"name": "本社所在地", "value": ""},
     {"name": "設立年", "value": ""},
-    {"name": "事業内容", "value": ""}
+    {"name": "事業概要", "value": ""}
     {"name": "売上高", "year": "2024", "value": ""},
     {"name": "売上高", "year": "2023", "value": ""},
     {"name": "売上高", "year": "2022", "value": ""},
@@ -53,8 +53,8 @@ OUTPUT_FORMAT = """
 
 
 async def fetch_any_data(COMAPNY_NAME, search_word, top_n=3):
+    db = session.SessionLocal()
     try:
-        db = session.SessionLocal()
         response = await rag.rag_with_googlesearch(
             db,
             f"{search_word}",
@@ -65,4 +65,5 @@ async def fetch_any_data(COMAPNY_NAME, search_word, top_n=3):
         await db.close()
         return rag.delete_nouse_content(response, ["代表者"])
     except Exception as e:
+        await db.close()
         return []

@@ -1,5 +1,6 @@
 from app.rag import rag
 from app.db import session
+from loguru import logger
 
 OUTPUT_FORMAT = """
 [
@@ -12,12 +13,14 @@ OUTPUT_FORMAT = """
 
 
 async def fetch_company_phiolosophy(COMAPNY_NAME):
+    db = session.SessionLocal()
     try:
-        db = session.SessionLocal()
         response = await rag.rag_with_googlesearch(
             db, f"{COMAPNY_NAME} 理念", OUTPUT_FORMAT
         )
         await db.close()
         return rag.delete_nouse_content(response, ["代表者"])
     except Exception as e:
+        logger.error(e)
+        await db.close()
         return []

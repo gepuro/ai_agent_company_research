@@ -35,19 +35,25 @@ async def rag_with_googlesearch(
     search_results = await search.google(f"{search_word}", top_n=top_n)
     responses = []
     for search_result in search_results:
-        response = gemini.gemini(
+        content = search_result["markdown"]
+        if len(content) == 0 or len(content) > 20000:
+            # markdownが取得できない or 長すぎて結果が怪しい場合は、スニペットを利用する
+            content = search_result["snippet"]
+
+        response = await gemini.gemini(
+            db=db,
             contents=f"""
             {prompt}
 
             Webサイト: ```
-            {search_result["markdown"]}
+            {content}
             ```
 
             情報がない項目は、空文字''にしてください。
             出力フォーマット(JSON): ```
             {output_format}
             ```
-            """
+            """,
         )
         try:
             # strict=Falseでエラーを無視
@@ -69,6 +75,9 @@ async def rag_with_googlesearch(
             data = {
                 "response": response_dict,
                 "source": search_result["link"],
+                "markdown_length": len(search_result["markdown"]),
+                "snippet_length": len(search_result["snippet"]),
+                "content_length": len(content),
                 "corporate_number": corporate_number,
             }
 

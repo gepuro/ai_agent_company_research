@@ -90,7 +90,7 @@ class CacheUrl(session.Base):
 # )
 class CacheGemini(session.Base):
     __tablename__ = "cache_gemini"
-    url = Column(String, primary_key=True)
+    prompt_hash = Column(String, primary_key=True)
     model = Column(String, nullable=False, default="")
     response = Column(Text, nullable=False, default="")
     created_at = Column(DateTime, nullable=False, server_default=current_timestamp())

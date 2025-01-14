@@ -65,6 +65,7 @@ async def save_gbiz_data():
                 if corporate_number in corporate_numbers:
                     continue
 
+                logger.info(f"fetch corporate_number: {corporate_number}")
                 gbiz_data = fetch_gbiz(corporate_number)
                 gbiz_data["corporate_number"] = corporate_number
 

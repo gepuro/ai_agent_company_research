@@ -3,13 +3,22 @@ from app.db import models
 from app.db import session
 from app.db.crud import common
 import asyncio
+import unicodedata
 
 
 async def load_houjin_bangou():
     geocoding_api = GeocodingAPI()
 
+    # is_skip = True
     with open("data/00_zenkoku_all_20241227.csv") as f:
         for line in f:
+            # 途中まで動いていたときに、処理を復帰させるようの処理
+            # if line.find("5569458,9700150128438") >= 0:
+            #     is_skip = False
+            # if is_skip:
+            #     continue
+            # print(line)
+
             record = line.split(",")
             corporate_number = record[1]
             company_name = record[6].replace('"', "")
@@ -21,7 +30,7 @@ async def load_houjin_bangou():
 
             model = models.HoujinBangou(
                 corporate_number=corporate_number,
-                company_name=company_name,
+                company_name=unicodedata.normalize('NFKC', company_name),
                 concatenation_address=concatenation_address,
                 prefecture_name=geocoding["pref"],
                 city_name=geocoding["city"],
