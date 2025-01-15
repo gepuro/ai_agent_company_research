@@ -5,6 +5,7 @@
 	let isLoading = false;
 	let error: Error | null = null;
 	let debounceTimer;
+	export let data: PageData;
 
 	interface Company {
 		company_name: string;
@@ -121,7 +122,25 @@
 			{/if}
 		</div>
 	</div>
-	<div class="fixed bottom-0 z-0 w-full p-4 text-center">
+	{#await data.streamed.recent_generated_companies then recent_generated_companies}
+		<div class="mt-8 w-full max-w-md px-4">
+			<h2 class="mb-4 text-lg font-semibold text-gray-900">最近に調査された企業</h2>
+			<ul>
+				{#each recent_generated_companies as company}
+					<li class="p-1">
+						<a
+							href="/app/company/{company.corporate_number}"
+							class="font-medium text-blue-600 transition-colors duration-200 hover:text-blue-700 hover:underline"
+						>
+							{company.company_name}
+						</a>
+					</li>
+				{/each}
+			</ul>
+		</div>
+	{/await}
+	<div class="mt-10"></div>
+	<div class="z-0 mt-auto w-full border-t border-gray-300 p-4 text-center">
 		<ul class="flex flex-col justify-center sm:flex-row">
 			<li class="mb-2 mr-8">
 				<a

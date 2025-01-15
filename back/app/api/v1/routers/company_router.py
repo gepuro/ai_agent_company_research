@@ -4,8 +4,9 @@ from fastapi.responses import JSONResponse
 from app.rag import company_overview, philosophy, swot, sales, competitor, business, hr
 from app.util import tidy_response
 import asyncio
-from app.db.crud import houjin_bangou
+from app.db.crud import houjin_bangou, cache
 from app.db import session
+import json
 
 company_router = r = APIRouter()
 
@@ -32,3 +33,8 @@ async def comapny_houjin_bangou(
             db=db, corporate_number=corporate_number
         )
     )[0]
+
+
+@r.get("/company/cache", response_class=JSONResponse)
+async def company_cache(db=Depends(session.get_db)):
+    return await cache.fetch_cache_companies(db=db)

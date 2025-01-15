@@ -69,3 +69,21 @@ async def add_cache_company(db: AsyncSession, corporate_number: str, response: s
     return await update_record(
         db, models.CacheCompany, {"corporate_number": corporate_number}, cache
     )
+
+
+async def fetch_cache_companies(db: AsyncSession):
+    query = (
+        select(
+            models.CacheCompany.corporate_number,
+            models.HoujinBangou.company_name,
+        )
+        .join(
+            models.HoujinBangou,
+            models.HoujinBangou.corporate_number
+            == models.CacheCompany.corporate_number,
+        )
+        .order_by(models.CacheCompany.created_at.desc())
+        .limit(10)
+    )
+    result = await db.execute(query)
+    return result.mappings().fetchall()

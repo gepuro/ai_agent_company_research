@@ -59,6 +59,6 @@ async def fetch_houjin_bangou_with_company_name(db: AsyncSession, company_name: 
         models.HoujinBangou.company_name,
         models.HoujinBangou.corporate_number,
         models.HoujinBangou.concatenation_address,
-    ).filter(models.HoujinBangou.company_name.like(f"%{company_name}%"))
+    ).filter(models.HoujinBangou.company_name.ilike(f"%{company_name}%"))
     result = await db.execute(query)
     return result.mappings().fetchall()
