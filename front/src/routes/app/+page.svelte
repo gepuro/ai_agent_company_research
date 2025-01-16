@@ -140,7 +140,7 @@
 		</div>
 	{/await}
 	<div class="mt-10"></div>
-	<div class="z-0 mt-auto w-full border-t border-gray-300 p-4 text-center">
+	<div class="border-gray-3w00 z-0 mt-auto w-full border-t p-4 text-center">
 		<ul class="flex flex-col justify-center sm:flex-row">
 			<li class="mb-2 mr-8">
 				<a
