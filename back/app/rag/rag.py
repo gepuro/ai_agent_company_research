@@ -55,15 +55,17 @@ async def rag_with_googlesearch(
             ```
             """,
         )
+
         try:
             # strict=Falseでエラーを無視
 
-            response_dict = json.loads(
-                response.candidates[0].content.parts[0].text, strict=False
-            )["response"]
+            # response_dict = json.loads(
+            #     response.candidates[0].content.parts[0].text, strict=False
+            # )["response"]
+            response_dict = json.loads(response, strict=False)
 
-            if isinstance(response_dict, str):
-                response_dict = json.loads(response_dict, strict=False)
+            # if isinstance(response_dict, str):
+            #     response_dict = json.loads(response_dict, strict=False)
 
             corporate_number = await nayose.identify_corporate_number(
                 db,

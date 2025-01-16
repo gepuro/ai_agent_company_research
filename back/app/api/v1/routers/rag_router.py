@@ -411,9 +411,11 @@ async def rag_company(db=Depends(session.get_db), corporate_number: str | None =
             ```
             """,
         )
-        search_words = json.loads(
-            json.loads(response.candidates[0].content.parts[0].text)["response"]
-        )
+        # search_words = json.loads(
+        #     json.loads(response.candidates[0].content.parts[0].text)["response"]
+        # )
+        search_words = json.loads(response)
+
     except Exception as e:
         logger.error(e)
         search_words = []
@@ -421,6 +423,7 @@ async def rag_company(db=Depends(session.get_db), corporate_number: str | None =
     agent_tasks = [
         any_search.fetch_any_data(COMAPNY_NAME, search_word["search_word"], top_n=1)
         for search_word in search_words[0:10]
+        # for search_word in search_words[0:1]
     ]
     agent_tasks_response = await asyncio.gather(*agent_tasks)
     total_response = defined_tasks_response + agent_tasks_response

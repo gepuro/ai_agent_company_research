@@ -1051,7 +1051,8 @@ def delete_duplicate(data):
 
         """,
     )
-    return json.loads(response.candidates[0].content.parts[0].text)["response"]
+    # return json.loads(response.candidates[0].content.parts[0].text)["response"]
+    return json.loads(response)
 
 
 def tidy_with_gemini(data):
