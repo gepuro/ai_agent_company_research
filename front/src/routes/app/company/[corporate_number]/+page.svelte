@@ -688,7 +688,7 @@
 					</div>
 
 					<!-- オフィス -->
-					<div class="mb-8">
+					<!-- <div class="mb-8">
 						<h2 class="mb-2 text-xl font-semibold">オフィス</h2>
 						{#if streamedData[selectedCompany].offices}
 							<ul>
@@ -709,10 +709,10 @@
 								{/each}
 							</ul>
 						{/if}
-					</div>
+					</div> -->
 
 					<!-- 工場 -->
-					<div class="mb-8">
+					<!-- <div class="mb-8">
 						<h2 class="mb-2 text-xl font-semibold">工場</h2>
 						{#if streamedData[selectedCompany].factories}
 							<ul>
@@ -733,10 +733,10 @@
 								{/each}
 							</ul>
 						{/if}
-					</div>
+					</div> -->
 
 					<!-- 店舗 -->
-					<div class="mb-8">
+					<!-- <div class="mb-8">
 						<h2 class="mb-2 text-xl font-semibold">店舗</h2>
 						{#if streamedData[selectedCompany].stores}
 							<ul>
@@ -757,7 +757,7 @@
 								{/each}
 							</ul>
 						{/if}
-					</div>
+					</div> -->
 
 					<!-- 法人番号 -->
 					<div class="mb-8">

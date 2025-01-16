@@ -22,8 +22,6 @@ import os
 from google import genai
 from google.genai import types
 
-client = genai.Client(vertexai=True, project="your-project-id", location="us-central1")
-
 
 # def gemini_with_grounding(contents):
 #     vertexai.init(project="ai-agent-cr-20241229", location="asia-northeast1")
