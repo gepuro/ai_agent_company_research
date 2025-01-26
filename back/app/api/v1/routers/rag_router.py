@@ -387,11 +387,15 @@ async def rag_company(db=Depends(session.get_db), corporate_number: str | None =
     ]
     """
 
-    target_key = [
-        key
-        for key in tidied_response
-        if tidied_response[key]["name"]["value"] == COMAPNY_NAME
-    ][0]
+    try:
+        target_key = [
+            key
+            for key in tidied_response
+            if tidied_response[key]["name"]["value"] == COMAPNY_NAME
+        ]
+    except:
+        # 一致する企業名が見つからないとき
+        target_key = tidied_response.keys()[0]
 
     try:
         response = await gemini.gemini(
