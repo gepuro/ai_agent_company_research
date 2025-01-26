@@ -127,6 +127,11 @@
 			{/if}
 		</div>
 	</div>
+	<div class="mt-8 w-full max-w-md px-4">
+		<div>
+			スマートフォンからの利用は動作が不安定なようです。パソコンからのアクセスをお願いします。また、「最近に調査された企業」が表示されない場合はアクセスが集中しています。時間をおいてからのご利用をお願いします。
+		</div>
+	</div>
 	{#await data.streamed.recent_generated_companies then recent_generated_companies}
 		<div class="mt-8 w-full max-w-md px-4">
 			<h2 class="mb-4 text-lg font-semibold text-gray-900">最近に調査された企業</h2>
