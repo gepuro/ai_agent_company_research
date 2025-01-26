@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	let searchTerm = '';
 	let searchResults: Company[] = [];
 	let selectedCompany: Company | null = null;
@@ -6,6 +7,10 @@
 	let error: Error | null = null;
 	let debounceTimer;
 	export let data: PageData;
+
+	onMount(() => {
+		document.title = 'QuickBiz Search | 企業情報瞬速検索';
+	});
 
 	interface Company {
 		company_name: string;
