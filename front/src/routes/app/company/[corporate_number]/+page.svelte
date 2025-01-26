@@ -105,6 +105,8 @@
 				return 0;
 			});
 			loading = false;
+
+			document.title = sortedCompanyKeys[0] + ' | PittariData';
 		} catch (error) {
 			console.error('Error loading streamed data:', error);
 		}

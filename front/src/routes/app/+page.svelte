@@ -9,7 +9,7 @@
 	export let data: PageData;
 
 	onMount(() => {
-		document.title = 'QuickBiz Search | 企業情報瞬速検索';
+		document.title = '3分で企業調査 | PittariData';
 	});
 
 	interface Company {
